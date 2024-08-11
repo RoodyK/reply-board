@@ -3,12 +3,56 @@ spring:
     ansi:
       enabled: always
 
-  h2:
-    console:
-      enabled: true
+  profiles:
+    active: local
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+api:
+  url-prefix: /api/v1
+  login-url: /api/v1/auth/login
+  logout-url: /api/v1/auth/logout
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/reply_board
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: board
+    password: board1234
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true  # 출력되는 SQL 쿼리를 포맷팅하여 보기 좋게 표시
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
 
   datasource:
     url: jdbc:h2:mem:replyboard
     driver-class-name: org.h2.Driver
     username: sa
     password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true  # 출력되는 SQL 쿼리를 포맷팅하여 보기 좋게 표시

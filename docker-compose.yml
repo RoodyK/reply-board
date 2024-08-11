@@ -1,0 +1,12 @@
+services:
+  mysql:
+    container_name: replyboard
+    image: mysql/mysql-server:8.0.28
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: "root1234"
+      MYSQL_DATABASE: "reply_board"
+      MYSQL_USER: "board"
+      MYSQL_PASSWORD: "board1234"
+    ports:
+      - "3306:3306"
