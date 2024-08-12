@@ -202,7 +202,7 @@ public class AuthController {
 
 이전 방법과 응답이 달라진 것을 확인할 수 있다.
 
-이는 CustomAuthenticationEntryPoint가 동작하지 않은 것을 확인할 수 있는데, 우리가 `.requestMatchers(...).hasRole(...)` 을 사용했을 때는 `SecurityFilterChain` 에서 접근을 제어한다. 필터에서는 리소스에 접근했을 때 `AuthenticationEntryPoint`나 `AccessDeniedHandler`를 호출해서 처리하게 된다.
+이는 `CustomAuthenticationEntryPoint`가 동작하지 않은 것을 확인할 수 있는데, 우리가 `.requestMatchers(...).hasRole(...)` 을 사용했을 때는 `SecurityFilterChain` 에서 접근을 제어한다. 필터에서는 리소스에 접근했을 때 `AuthenticationEntryPoint`나 `AccessDeniedHandler`를 호출해서 처리하게 된다.
 
 하지만 `@PreAuthorize`와 같은 애노테이션 기반의 접근 제어를 하면 스프링 AOP 기반으로 처리하기 때문에 생성한 `@RestControllerAdvice` 클래스가 있다면 이곳에서 예외를 잡아서 처리하게 된다. 이 때문에 예외가 `@RestControllerAdvice`에서 처리된 것이다.
 
@@ -210,4 +210,125 @@ public class AuthController {
 
 ### This object has already been built 에러
 
-스프링 시큐리티에서 HttpSecurity 객체는 여러번 초기화되고 빌드될 수 없다. 여러 번 빌드하려고 할 때 "This object has already been built" 메시지와 함께 에러가 발생하는 것을 볼 수 있다. 
+스프링 시큐리티에서 HttpSecurity 객체는 여러번 초기화되고 빌드될 수 없다. 여러 번 빌드하려고 할 때 "This object has already been built" 메시지와 함께 에러가 발생하는 것을 볼 수 있다.
+
+<br/>
+
+### @WithMockUser 커스터 마이징
+
+Controller 에서 `@AuthenticationPrincipal`을 사용하는 로직이 있는데 CustomUserDetails에서 참조하는 MemberDto 객체의 id값을 사용한다.  
+하지만 스프링 시큐리티가 기본적으로 제공하는 `@WithMockUser`에서 사용가능한 프로퍼티는 다음과 같다.
+
+```java
+public @interface WithMockUser {
+    String value() default "user";
+
+    String username() default "";
+
+    String[] roles() default {"USER"};
+
+    String[] authorities() default {};
+
+    String password() default "password";
+
+    // ...
+}
+```
+
+<br/>
+
+하지만 컨트롤러에서는 MemberDto에서 id 값을 꺼내야 하므로 `@WithMockUser`를 커스터마이징해서 사용하기로 했다.
+```java
+// 커스터마이징한 UserDetails
+@Getter
+public class CustomUserDetails implements UserDetails {
+
+    private final MemberDto memberDto;
+    
+    // ...
+}
+```
+
+<br/>
+
+`@WithMockUser`를 커스터마이징 할 때는 애노테이션을 생성한 뒤 `@WithSecurityContext` 애노테이션을 사용해서 `SecurityContext`를 직접 생성해줘야 한다.  
+`@WithSecurityContext`의 `factory` 프로퍼티로 `SecurityContext`를 생성하는 클래스를 명시해준다.
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@WithSecurityContext(factory = AdminMockSecurityContext.class) // 시큐리티 테스트용 SecurityContext 생성을 명시
+public @interface CustomMockRoleAdmin {
+
+    String email() default "admin3@gmail.com";
+
+    String password() default "1234";
+
+    String name() default "루디";
+
+    Role role() default Role.ROLE_ADMIN;
+}
+```
+<br/>
+
+다음으로 factory로 지정한 `AdminMockSecurityContext`를 구현해준다.  
+`WithSecurityContextFactory`를 구현해서 제네릭 타입으로 생성했던 애노테이션을 사용하면 된다.  
+`createSecurityContext(CustomMockRoleAdmin annotation)` 메서드를 구현해줘야 하는데 파라미터에 있는 `annotation`은 우리가 생성했던 애노테이션이므로 default로 지정한 값들을 모두 사용할 수 있다.  
+
+
+```java
+@RequiredArgsConstructor
+public class AdminMockSecurityContext implements WithSecurityContextFactory<CustomMockRoleAdmin> {
+
+    @Override
+    public SecurityContext createSecurityContext(CustomMockRoleAdmin annotation) {
+        MemberDto memberDto = MemberDto.builder()
+                .id(1L)
+                .email(annotation.email())
+                .password(annotation.password())
+                .name(annotation.name())
+                .roles(Set.of(new SimpleGrantedAuthority(annotation.role().name())))
+                .build();
+
+        CustomUserDetails details = new CustomUserDetails(memberDto);
+        UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(details, memberDto.getPassword(), memberDto.getRoles());
+
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(token);
+
+        return securityContext;
+    }
+}
+```
+
+MemberDto와 CustomUserDetails를 설정하고 `UsernamePasswordAuthenticationToken`을 만들어 준 뒤 생성한 `SecurityContext`에 토큰을 넣고 리턴해줬다.  
+이제 만들어진 `@CustomMockRoleAdmin`을 사용해본다.
+
+```java
+@CustomMockRoleAdmin
+@DisplayName("카테고리를 등록한다.")
+@Test
+void addCategoryRoleAdmin() throws Exception {
+    CreateCategoryRequest request = createCategoryRequest("기타");
+
+    BDDMockito.given(categoryService.addCategory(anyLong(), any(CreateCategoryServiceRequest.class)))
+            .willReturn(1L);
+
+    mockMvc.perform(post("/api/v1/categories")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(objectMapper.writeValueAsString(request))
+    )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(200))
+            .andExpect(jsonPath("$.result").value(true))
+            .andExpect(jsonPath("$.message").value("OK"))
+            .andExpect(jsonPath("$.data").value(1L))
+            ;
+
+    BDDMockito.then(categoryService).should().addCategory(anyLong(), any(CreateCategoryServiceRequest.class));
+}
+```
+
+테스트에 만든 권한을 갖는 `UserDetails`가 적용되서 테스트가 통과함을 확인할 수 있다.

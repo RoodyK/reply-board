@@ -15,20 +15,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AdminMockSecurityContext implements WithSecurityContextFactory<CustomMockRoleAdmin> {
 
-//    private final PasswordEncoder passwordEncoder;
-//    private final MemberRepository memberRepository;
-
     @Override
     public SecurityContext createSecurityContext(CustomMockRoleAdmin annotation) {
-//        Member member = Member.builder()
-//                .email(annotation.email())
-//                .password(passwordEncoder.encode(annotation.password()))
-//                .name(annotation.name())
-//                .build();
-//        member.addRole(Set.of(annotation.role()));
-//
-//        memberRepository.save(member);
-
         MemberDto memberDto = MemberDto.builder()
                 .id(1L)
                 .email(annotation.email())

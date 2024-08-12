@@ -252,6 +252,21 @@ class CategoryControllerTest {
         ;
     }
 
+    @CustomMockRoleUser
+    @DisplayName("카테고리를 삭제할 때 ROLE_ADMIN 권한이 필요하다.")
+    @Test
+    void removeCategoryRoleUser() throws Exception {
+        mockMvc.perform(delete("/api/v1/categories/{categoryId}", 1L)
+                )
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1200))
+                .andExpect(jsonPath("$.message").value("페이지에 접근할 수 없습니다."))
+                .andExpect(jsonPath("$.validation").isEmpty())
+        ;
+    }
+
     @CustomMockRoleAdmin
     @DisplayName("카테고리를 수정한다")
     @Test
@@ -333,6 +348,25 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
                 .andExpect(jsonPath("$.message").value("중복된 카테고리명이 존재합니다."))
+        ;
+    }
+
+    @CustomMockRoleUser
+    @DisplayName("카테고리를 수정할 때 ROLE_ADMIN 권한이 필요하다.")
+    @Test
+    void editCategoryRoleUser() throws Exception {
+        EditCategoryRequest request = editCategoryRequest("수정");
+
+        mockMvc.perform(patch("/api/v1/categories/{categoryId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1200))
+                .andExpect(jsonPath("$.message").value("페이지에 접근할 수 없습니다."))
+                .andExpect(jsonPath("$.validation").isEmpty())
         ;
     }
 
