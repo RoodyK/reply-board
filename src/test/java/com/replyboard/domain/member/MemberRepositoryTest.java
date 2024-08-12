@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -32,7 +33,7 @@ class MemberRepositoryTest {
                 .password("1234")
                 .name("루디")
                 .build();
-        member.addRole(List.of(Role.ROLE_USER.name()));
+        member.addRole(Set.of(Role.ROLE_USER));
         memberRepository.save(member);
 
         // when
@@ -41,7 +42,7 @@ class MemberRepositoryTest {
         // then
         assertThat(findMember).isNotNull();
         assertThat(findMember.getEmail()).isEqualTo(email);
-        assertThat(findMember.getRoles()).containsExactlyInAnyOrder(Role.ROLE_USER.name());
+        assertThat(findMember.getRoles()).containsExactlyInAnyOrder(Role.ROLE_USER);
         assertThat(findMember.getName()).isEqualTo("루디");
     }
 
@@ -54,7 +55,7 @@ class MemberRepositoryTest {
                 .password("1234")
                 .name("루디")
                 .build();
-        member.addRole(List.of(Role.ROLE_USER.name()));
+        member.addRole(Set.of(Role.ROLE_USER));
         memberRepository.save(member);
 
         // when

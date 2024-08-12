@@ -7,7 +7,7 @@ import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -18,10 +18,10 @@ public class MemberDto {
     private final String email;
     private final String password;
     private final String name;
-    private final Collection<GrantedAuthority> roles;
+    private final Set<GrantedAuthority> roles;
 
     @Builder
-    public MemberDto(Long id, String email, String password, String name, Collection<GrantedAuthority> roles) {
+    public MemberDto(Long id, String email, String password, String name, Set<GrantedAuthority> roles) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -35,7 +35,7 @@ public class MemberDto {
                 .email(member.getEmail())
                 .password(member.getPassword())
                 .name(member.getName())
-                .roles(member.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()))
+                .roles(member.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toSet()))
                 .build();
     }
 }

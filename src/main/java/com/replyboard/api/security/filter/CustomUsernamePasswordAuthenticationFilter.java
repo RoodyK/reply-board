@@ -1,6 +1,7 @@
 package com.replyboard.api.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.replyboard.api.security.auth.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +46,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
 
         String sessionId = request.getSession().getId();
         LocalDateTime sessionExpiryTime = LocalDateTime.now().plusSeconds(request.getSession().getMaxInactiveInterval());
@@ -53,7 +54,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         log.info("[로그인 성공] 세션 아이디 : {}", sessionId);
         log.info("[로그인 성공] 세션 만료시간 : {}", sessionExpiryTime);
 
-        super.successfulAuthentication(request, response, chain, authResult);
+        super.successfulAuthentication(request, response, chain, authentication);
     }
 
     @Getter

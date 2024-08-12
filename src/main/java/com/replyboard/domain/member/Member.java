@@ -3,14 +3,16 @@ package com.replyboard.domain.member;
 
 import com.replyboard.domain.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@ToString
 public class Member extends BaseEntity {
 
     @Id
@@ -31,7 +33,8 @@ public class Member extends BaseEntity {
             name = "member_role",
             joinColumns = @JoinColumn(name = "member_id", referencedColumnName = "id")
     )
-    private List<String> roles;
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
 
     @Builder
     public Member(String email, String password, String name) {
@@ -40,7 +43,7 @@ public class Member extends BaseEntity {
         this.name = name;
     }
 
-    public void addRole(List<String> roles) {
+    public void addRole(Set<Role> roles) {
         this.roles = roles;
     }
 }

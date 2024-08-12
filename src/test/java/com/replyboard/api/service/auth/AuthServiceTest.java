@@ -4,7 +4,7 @@ import com.replyboard.api.controller.auth.request.SignupRequest;
 import com.replyboard.domain.member.Member;
 import com.replyboard.domain.member.MemberRepository;
 import com.replyboard.exception.DuplicatedMemberException;
-import com.replyboard.exception.InvalidParameterException;
+import com.replyboard.exception.InvalidRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,7 +73,7 @@ class AuthServiceTest {
 
         // when
         assertThatThrownBy(() -> authService.signup(request.toServiceRequest()))
-                .isInstanceOf(InvalidParameterException.class)
+                .isInstanceOf(InvalidRequestException.class)
                 .hasMessage("이메일을 입력해주세요.");
     }
 
@@ -85,7 +85,7 @@ class AuthServiceTest {
 
         // when
         assertThatThrownBy(() -> authService.signup(request.toServiceRequest()))
-                .isInstanceOf(InvalidParameterException.class)
+                .isInstanceOf(InvalidRequestException.class)
                 .hasMessage("이메일 형식에 맞춰 입력해주세요.");
     }
 
@@ -97,7 +97,7 @@ class AuthServiceTest {
 
         // when
         assertThatThrownBy(() -> authService.signup(request.toServiceRequest()))
-                .isInstanceOf(InvalidParameterException.class)
+                .isInstanceOf(InvalidRequestException.class)
                 .hasMessage("비밀번호를 입력해주세요.");
     }
 
