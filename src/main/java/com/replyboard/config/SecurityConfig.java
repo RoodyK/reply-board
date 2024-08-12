@@ -60,6 +60,7 @@ public class SecurityConfig {
                 .securityMatcher("/api/v1/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/categories").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/categories/{categoryId}").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(customUsernamePasswordAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)

@@ -20,8 +20,6 @@ public class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiErrorResponse methodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.error("{}", e.getClass().getSimpleName(), e);
-
         ApiErrorResponse response = ApiErrorResponse.of(false, ResultCode.BAD_REQUEST);
         for (FieldError fieldError : e.getFieldErrors()) {
             response.addValidation(fieldError.getField(), fieldError.getDefaultMessage());
@@ -32,8 +30,6 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(GeneralException.class)
     public ResponseEntity<ApiErrorResponse> generalException(GeneralException e) {
-        log.error("{}", e.getClass().getSimpleName(), e);
-
         ApiErrorResponse apiErrorResponse = ApiErrorResponse.of(false, e.getResultCode(), e.getMessage());
 
         if (e instanceof InvalidRequestException invalidRequestException) {
