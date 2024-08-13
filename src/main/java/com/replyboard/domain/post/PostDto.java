@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public class PostDto {
 
-    private String title;
-    private String content;
+    private final String title;
+    private final String content;
 
     @Builder
     public PostDto(String title, String content) {

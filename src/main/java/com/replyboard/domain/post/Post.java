@@ -1,6 +1,5 @@
 package com.replyboard.domain.post;
 
-import com.replyboard.api.service.post.request.CreatePostServiceRequest;
 import com.replyboard.domain.BaseEntity;
 import com.replyboard.domain.category.Category;
 import com.replyboard.domain.member.Member;
@@ -59,5 +58,18 @@ public class Post extends BaseEntity {
         post.category = category;
 
         return post;
+    }
+
+    public void editPost(PostEditDto postDto, Category category) {
+        this.title = postDto.getTitle();
+        this.content = postDto.getContent();
+        this.category = category;
+    }
+
+    public PostEditDto.PostDtoBuilder toEditPost() {
+        return PostEditDto.builder()
+                .title(title)
+                .content(content)
+                .postStatus(postStatus);
     }
 }

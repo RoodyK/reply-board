@@ -1,10 +1,21 @@
 package com.replyboard.api.controller.post;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.replyboard.api.controller.post.request.CreatePostRequest;
+import com.replyboard.api.controller.post.request.EditPostRequest;
 import com.replyboard.api.controller.post.request.PostSearch;
 import com.replyboard.api.dto.PagingResponse;
 import com.replyboard.api.service.post.PostService;
+import com.replyboard.api.service.post.request.CreatePostServiceRequest;
+import com.replyboard.api.service.post.request.EditPostServiceRequest;
 import com.replyboard.api.service.post.response.PostResponse;
 import com.replyboard.config.TestSecurityConfig;
+import com.replyboard.config.admin.CustomMockRoleAdmin;
+import com.replyboard.config.user.CustomMockRoleUser;
+import com.replyboard.domain.post.PostStatus;
+import com.replyboard.exception.CategoryNotFoundException;
+import com.replyboard.exception.MemberNotFoundException;
+import com.replyboard.exception.PostNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -12,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -20,7 +32,7 @@ import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,6 +46,9 @@ class PostControllerTest {
 
     @MockBean
     private PostService postService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @DisplayName("게시글 전체 목록을 조회한다. 패이지가 없으면 1페이지가 출력된다.")
     @Test
@@ -191,6 +206,339 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.code").value(1000))
                 .andExpect(jsonPath("$.message").value("Bad Request"))
                 .andExpect(jsonPath("$.validation.page").value("페이지는 0 이상이어야 합니다."))
+        ;
+    }
+
+
+    @CustomMockRoleAdmin
+    @DisplayName("게시글을 등록한다.")
+    @Test
+    void addPost() throws Exception {
+        // given
+        CreatePostRequest request = CreatePostRequest.builder()
+                .categoryId(1L)
+                .title("글 작성")
+                .content("내용입니다.")
+                .build();
+
+        BDDMockito.given(postService.addPost(anyLong(), any(CreatePostServiceRequest.class)))
+                .willReturn(1L);
+
+        // when
+        mockMvc.perform(post("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(true))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data").value(1L))
+        ;
+
+        BDDMockito.then(postService).should().addPost(anyLong(), any(CreatePostServiceRequest.class));
+    }
+
+    @CustomMockRoleUser
+    @DisplayName("게시글을 등록할 때 제목은 필수다.")
+    @Test
+    void addPostWithoutTitle() throws Exception {
+        // given
+        CreatePostRequest request = CreatePostRequest.builder()
+                .categoryId(1L)
+                .title(null)
+                .content("내용입니다.")
+                .build();
+
+        // when
+        mockMvc.perform(post("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1000))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.title").value("제목을 입력해주세요."))
+        ;
+    }
+
+    @CustomMockRoleUser
+    @DisplayName("게시글을 등록할 때 내용은 필수다.")
+    @Test
+    void addPostWithoutContent() throws Exception {
+        // given
+        CreatePostRequest request = CreatePostRequest.builder()
+                .categoryId(1L)
+                .title("글 제목")
+                .content(null)
+                .build();
+
+        // when
+        mockMvc.perform(post("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1000))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.content").value("내용을 입력해주세요."))
+        ;
+    }
+
+    @CustomMockRoleUser
+    @DisplayName("게시글을 등록할 때 카테고리 ID는 필수다.")
+    @Test
+    void addPostWithoutCategoryId() throws Exception {
+        // given
+        CreatePostRequest request = CreatePostRequest.builder()
+                .categoryId(null)
+                .title("글 제목")
+                .content("글 내용")
+                .build();
+
+        // when
+        mockMvc.perform(post("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1000))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.categoryId").value("카테고리는 필수입니다."))
+        ;
+    }
+
+    @CustomMockRoleUser
+    @DisplayName("게시글을 등록할 때 회원 ID로 회원이 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void addPostNotExistsMemberId() throws Exception {
+        // given
+        CreatePostRequest request = CreatePostRequest.builder()
+                .categoryId(1L)
+                .title("글 제목")
+                .content("글 내용")
+                .build();
+
+        BDDMockito.given(postService.addPost(anyLong(), any(CreatePostServiceRequest.class)))
+                .willThrow(new MemberNotFoundException());
+
+        // when
+        mockMvc.perform(post("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1300))
+                .andExpect(jsonPath("$.message").value("회원을 찾을 수 없습니다."))
+        ;
+    }
+
+    @CustomMockRoleUser
+    @DisplayName("게시글을 등록할 때 카테고리 ID로 카테고리가 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void addPostNotExistsCategoryId() throws Exception {
+        // given
+        CreatePostRequest request = CreatePostRequest.builder()
+                .categoryId(1L)
+                .title("글 제목")
+                .content("글 내용")
+                .build();
+
+        BDDMockito.given(postService.addPost(anyLong(), any(CreatePostServiceRequest.class)))
+                .willThrow(new CategoryNotFoundException());
+
+        // when
+        mockMvc.perform(post("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1300))
+                .andExpect(jsonPath("$.message").value("카테고리를 찾을 수 없습니다."))
+        ;
+    }
+
+    @CustomMockRoleAdmin
+    @DisplayName("게시글을 제거한다.")
+    @Test
+    void removePost() throws Exception {
+        // when
+        mockMvc.perform(delete("/api/v1/posts/{postId}", 1L)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(true))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data").isEmpty())
+        ;
+    }
+
+    @CustomMockRoleAdmin
+    @DisplayName("게시글을 제거할 떄 게시글이 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void removePostNotExistsPost() throws Exception {
+        // given
+        BDDMockito.willThrow(new PostNotFoundException()).given(postService).removePost(anyLong());
+
+        // when
+        mockMvc.perform(delete("/api/v1/posts/{postId}", 1L)
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1300))
+                .andExpect(jsonPath("$.message").value("게시글을 찾을 수 없습니다."))
+        ;
+    }
+
+    @CustomMockRoleAdmin
+    @DisplayName("게시글을 수정한다.")
+    @Test
+    void updatePost() throws Exception {
+        // given
+        EditPostRequest request = EditPostRequest.builder()
+                .categoryId(1L)
+                .title("글 작성")
+                .content("내용입니다.")
+                .postStatus(PostStatus.PUBLIC)
+                .build();
+
+        BDDMockito.willDoNothing()
+                .given(postService).editPost(anyLong(), any(EditPostServiceRequest.class));
+
+        // when
+        mockMvc.perform(patch("/api/v1/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(true))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data").isEmpty())
+        ;
+
+        BDDMockito.then(postService).should().editPost(anyLong(), any(EditPostServiceRequest.class));
+    }
+
+    @CustomMockRoleAdmin
+    @DisplayName("게시글을 수정할 때 카테고리는 필수값이다.")
+    @Test
+    void updatePostWithoutCategory() throws Exception {
+        // given
+        EditPostRequest request = EditPostRequest.builder()
+                .categoryId(null)
+                .title("글 작성")
+                .content("내용입니다.")
+                .postStatus(PostStatus.PUBLIC)
+                .build();
+
+        // when
+        mockMvc.perform(patch("/api/v1/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1000))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.categoryId").value("카테고리는 필수입니다."))
+        ;
+    }
+
+    @CustomMockRoleAdmin
+    @DisplayName("게시글을 수정할 때 게시글 상태는 필수값이다.")
+    @Test
+    void updatePostWithoutPostStatus() throws Exception {
+        // given
+        EditPostRequest request = EditPostRequest.builder()
+                .categoryId(1L)
+                .title("글 작성")
+                .content("내용입니다.")
+                .postStatus(null)
+                .build();
+
+        // when
+        mockMvc.perform(patch("/api/v1/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1000))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.postStatus").value("게시글 상태는 필수입니다."))
+        ;
+    }
+
+    @CustomMockRoleAdmin
+    @DisplayName("게시글을 수정할 때 게시글이 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void updatePostNotExistsPost() throws Exception {
+        // given
+        EditPostRequest request = EditPostRequest.builder()
+                .categoryId(1L)
+                .title("글 작성")
+                .content("내용입니다.")
+                .postStatus(PostStatus.PUBLIC)
+                .build();
+
+        BDDMockito.willThrow(new PostNotFoundException())
+                        .given(postService).editPost(anyLong(), any(EditPostServiceRequest.class));
+
+        // when
+        mockMvc.perform(patch("/api/v1/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1300))
+                .andExpect(jsonPath("$.message").value("게시글을 찾을 수 없습니다."))
+        ;
+    }
+
+    @CustomMockRoleAdmin
+    @DisplayName("게시글을 수정할 때 카테고리가 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void updatePostNotExistsCategory() throws Exception {
+        // given
+        EditPostRequest request = EditPostRequest.builder()
+                .categoryId(1L)
+                .title("글 작성")
+                .content("내용입니다.")
+                .postStatus(PostStatus.PUBLIC)
+                .build();
+
+        BDDMockito.willThrow(new CategoryNotFoundException())
+                .given(postService).editPost(anyLong(), any(EditPostServiceRequest.class));
+
+        // when
+        mockMvc.perform(patch("/api/v1/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1300))
+                .andExpect(jsonPath("$.message").value("카테고리를 찾을 수 없습니다."))
         ;
     }
 

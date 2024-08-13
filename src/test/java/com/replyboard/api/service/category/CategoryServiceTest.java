@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
+@Transactional
 class CategoryServiceTest {
 
     @Autowired
@@ -42,11 +44,11 @@ class CategoryServiceTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    void tearDown() {
-        categoryRepository.deleteAllInBatch();
-        memberRepository.deleteAllInBatch();
-    }
+//    @BeforeEach
+//    void tearDown() {
+//        categoryRepository.deleteAllInBatch();
+//        memberRepository.deleteAllInBatch();
+//    }
 
     @DisplayName("카테고리를 등록한다.")
     @Test

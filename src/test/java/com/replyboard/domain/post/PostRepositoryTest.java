@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
+@Transactional
 class PostRepositoryTest {
 
     @Autowired
@@ -42,12 +44,12 @@ class PostRepositoryTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    void tearDown() {
-        postRepository.deleteAllInBatch();
-        categoryRepository.deleteAllInBatch();
-        memberRepository.deleteAllInBatch();
-    }
+//    @BeforeEach
+//    void tearDown() {
+//        postRepository.deleteAllInBatch();
+//        categoryRepository.deleteAllInBatch();
+//        memberRepository.deleteAllInBatch();
+//    }
 
     @DisplayName("전체 게시글을 최신글을 기준으로 페이징 처리해서 조회한다.")
     @Test
