@@ -264,22 +264,6 @@ class CategoryServiceTest {
                 .hasMessage("중복된 카테고리명이 존재합니다.");
     }
 
-    private static Category createCategory(String name, Member member) {
-        Category category = Category.builder()
-                .name(name)
-                .build();
-        category.addMember(member);
-
-        return category;
-    }
-
-
-    private CreateCategoryRequest createCategoryRequest(String name) {
-        return CreateCategoryRequest.builder()
-                .name(name)
-                .build();
-    }
-
     private Member createMember() {
         Member member = Member.builder()
                 .name("루디")
@@ -290,6 +274,21 @@ class CategoryServiceTest {
         member.addRole(Set.of(Role.ROLE_ADMIN));
 
         return member;
+    }
+
+    private Category createCategory(String name, Member member) {
+        Category category = Category.builder()
+                .name(name)
+                .build();
+        category.addMember(member);
+
+        return category;
+    }
+
+    private CreateCategoryRequest createCategoryRequest(String name) {
+        return CreateCategoryRequest.builder()
+                .name(name)
+                .build();
     }
 
     private EditCategoryRequest editCategoryRequest(String name) {

@@ -11,10 +11,12 @@ public class CustomProperties {
 
     private final String loginUrl;
     private final String logoutUrl;
+    private final Integer pageSize;
 
     @ConstructorBinding
-    public CustomProperties(String loginUrl, String logoutUrl) {
+    public CustomProperties(String loginUrl, String logoutUrl, Integer pageSize) {
         this.loginUrl = loginUrl;
         this.logoutUrl = logoutUrl;
+        this.pageSize = pageSize;
     }
 }
