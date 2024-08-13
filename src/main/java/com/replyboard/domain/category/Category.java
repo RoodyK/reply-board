@@ -34,6 +34,9 @@ public class Category extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany(mappedBy = "category")
+    public List<Post> posts = new ArrayList<>();
+
     @Builder
     public Category(String name) {
         this.name = name;
