@@ -417,7 +417,7 @@ class PostControllerTest {
                 .build();
 
         BDDMockito.willDoNothing()
-                .given(postService).editPost(anyLong(), any(EditPostServiceRequest.class));
+                .given(postService).editPost(anyLong(), anyLong(), any(EditPostServiceRequest.class));
 
         // when
         mockMvc.perform(patch("/api/v1/posts/{postId}", 1L)
@@ -432,7 +432,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty())
         ;
 
-        BDDMockito.then(postService).should().editPost(anyLong(), any(EditPostServiceRequest.class));
+        BDDMockito.then(postService).should().editPost(anyLong(), anyLong(), any(EditPostServiceRequest.class));
     }
 
     @CustomMockRoleAdmin
@@ -500,7 +500,7 @@ class PostControllerTest {
                 .build();
 
         BDDMockito.willThrow(new PostNotFoundException())
-                        .given(postService).editPost(anyLong(), any(EditPostServiceRequest.class));
+                        .given(postService).editPost(anyLong(), anyLong(), any(EditPostServiceRequest.class));
 
         // when
         mockMvc.perform(patch("/api/v1/posts/{postId}", 1L)
@@ -528,7 +528,7 @@ class PostControllerTest {
                 .build();
 
         BDDMockito.willThrow(new CategoryNotFoundException())
-                .given(postService).editPost(anyLong(), any(EditPostServiceRequest.class));
+                .given(postService).editPost(anyLong(), anyLong(), any(EditPostServiceRequest.class));
 
         // when
         mockMvc.perform(patch("/api/v1/posts/{postId}", 1L)

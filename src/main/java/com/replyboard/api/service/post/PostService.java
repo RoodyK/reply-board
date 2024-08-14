@@ -62,16 +62,7 @@ public class PostService {
         Post post = postRepository.findByPost(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!Objects.equals(post.getMember().getId(), memberId)) {
-            throw new NotOwnPostException();
-        }
-
-        return PostDetailResponse.of(post);
-    }
-
-    public PostDetailResponse getPostPrivate(Long postId) {
-        Post post = postRepository.findByPost(postId)
-                .orElseThrow(PostNotFoundException::new);
+        validMemberId(memberId, post.getMember().getId());
 
         return PostDetailResponse.of(post);
     }
@@ -100,9 +91,11 @@ public class PostService {
     }
 
     @Transactional
-    public void editPost(Long postId, EditPostServiceRequest request) {
+    public void editPost(Long postId, Long memberId, EditPostServiceRequest request) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
+
+        validMemberId(memberId, post.getMember().getId());
 
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(CategoryNotFoundException::new);
@@ -124,5 +117,15 @@ public class PostService {
                 .orElseThrow(PostNotFoundException::new);
 
         return post.incrementViews();
+    }
+
+    private void validMemberId(Long loginId, Long postWriterId) {
+        if (!isSameMemberId(loginId, postWriterId)) {
+            throw new NotOwnPostException();
+        }
+    }
+
+    private boolean isSameMemberId(Long memberId, Long postWriterId) {
+        return Objects.equals(memberId, postWriterId);
     }
 }

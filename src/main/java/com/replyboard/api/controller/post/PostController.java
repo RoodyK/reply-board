@@ -80,10 +80,12 @@ public class PostController {
 
     @PatchMapping("/posts/{postId}")
     public ResponseEntity<ApiDataResponse<Void>> updatePost(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("postId") Long postId,
             @Valid @RequestBody EditPostRequest request
     ) {
-        postService.editPost(postId, request.toServiceRequest());
+        MemberDto memberDto = userDetails.getMemberDto();
+        postService.editPost(postId, memberDto.getId(), request.toServiceRequest());
 
         return ResponseEntity.ok().body(ApiDataResponse.empty());
     }

@@ -424,7 +424,7 @@ class PostServiceTest {
                 .build();
 
         // when
-        postService.editPost(post.getId(), editRequest.toServiceRequest());
+        postService.editPost(post.getId(), member.getId(), editRequest.toServiceRequest());
 
         // then
         Post findPost = postRepository.findAll().get(0);
@@ -463,7 +463,7 @@ class PostServiceTest {
                 .build();
 
         // when
-        postService.editPost(post.getId(), editRequest.toServiceRequest());
+        postService.editPost(post.getId(), member.getId(), editRequest.toServiceRequest());
 
         // then
         Post findPost = postRepository.findAll().get(0);
@@ -502,7 +502,7 @@ class PostServiceTest {
                 .build();
 
         // when
-        postService.editPost(post.getId(), editRequest.toServiceRequest());
+        postService.editPost(post.getId(), member.getId(), editRequest.toServiceRequest());
 
         // then
         Post findPost = postRepository.findAll().get(0);
@@ -539,7 +539,7 @@ class PostServiceTest {
                 .build();
 
         // when
-        postService.editPost(post.getId(), editRequest.toServiceRequest());
+        postService.editPost(post.getId(), member.getId(), editRequest.toServiceRequest());
 
         // then
         Post findPost = postRepository.findAll().get(0);
@@ -575,7 +575,7 @@ class PostServiceTest {
                 .build();
 
         // when
-        assertThatThrownBy(() -> postService.editPost(post.getId() + 1L, editRequest.toServiceRequest()))
+        assertThatThrownBy(() -> postService.editPost(post.getId() + 1L, member.getId(), editRequest.toServiceRequest()))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessage("게시글을 찾을 수 없습니다.");
     }
@@ -607,7 +607,7 @@ class PostServiceTest {
                 .build();
 
         // when
-        assertThatThrownBy(() -> postService.editPost(post.getId(), editRequest.toServiceRequest()))
+        assertThatThrownBy(() -> postService.editPost(post.getId(), member.getId(), editRequest.toServiceRequest()))
                 .isInstanceOf(CategoryNotFoundException.class)
                 .hasMessage("카테고리를 찾을 수 없습니다.");
     }
