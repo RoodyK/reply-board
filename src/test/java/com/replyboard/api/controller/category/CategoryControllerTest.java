@@ -1,6 +1,7 @@
 package com.replyboard.api.controller.category;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.replyboard.ControllerTestSupport;
 import com.replyboard.api.controller.category.request.EditCategoryRequest;
 import com.replyboard.api.service.category.request.CreateCategoryServiceRequest;
 import com.replyboard.api.service.category.request.EditCategoryServiceRequest;
@@ -31,19 +32,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ActiveProfiles("test")
-@WebMvcTest(CategoryController.class)
-@Import(TestSecurityConfig.class)
-class CategoryControllerTest {
+//@ActiveProfiles("test")
+//@WebMvcTest(CategoryController.class)
+//@Import(TestSecurityConfig.class)
+class CategoryControllerTest extends ControllerTestSupport {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private CategoryService categoryService;
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @Autowired
+//    private ObjectMapper objectMapper;
+//
+//    @MockBean
+//    private CategoryService categoryService;
 
     @CustomMockRoleAdmin
     @DisplayName("카테고리를 등록한다.")
@@ -58,7 +59,6 @@ class CategoryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(request))
         )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.result").value(true))
@@ -79,7 +79,6 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1200))
@@ -98,7 +97,6 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -117,7 +115,6 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -139,7 +136,6 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -160,7 +156,6 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -181,7 +176,6 @@ class CategoryControllerTest {
         mockMvc.perform(get("/api/v1/categories")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.result").value(true))
@@ -209,7 +203,6 @@ class CategoryControllerTest {
         mockMvc.perform(get("/api/v1/categories")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                 )
-                .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1200))
@@ -227,7 +220,6 @@ class CategoryControllerTest {
 
         mockMvc.perform(delete("/api/v1/categories/{categoryId}", 1L)
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -244,7 +236,6 @@ class CategoryControllerTest {
 
         mockMvc.perform(delete("/api/v1/categories/{categoryId}", 1L)
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -258,7 +249,6 @@ class CategoryControllerTest {
     void removeCategoryRoleUser() throws Exception {
         mockMvc.perform(delete("/api/v1/categories/{categoryId}", 1L)
                 )
-                .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1200))
@@ -279,7 +269,6 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -300,7 +289,6 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -322,7 +310,6 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -343,7 +330,6 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -361,7 +347,6 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1200))

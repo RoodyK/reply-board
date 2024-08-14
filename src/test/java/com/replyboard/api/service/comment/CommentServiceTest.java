@@ -1,5 +1,6 @@
 package com.replyboard.api.service.comment;
 
+import com.replyboard.IntegrationTestSupport;
 import com.replyboard.api.controller.comment.request.CreateCommentRequest;
 import com.replyboard.api.controller.comment.request.EditCommentRequest;
 import com.replyboard.api.controller.comment.request.RemoveCommentRequest;
@@ -17,10 +18,7 @@ import com.replyboard.exception.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -28,10 +26,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
-class CommentServiceTest {
+class CommentServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private CommentService commentService;

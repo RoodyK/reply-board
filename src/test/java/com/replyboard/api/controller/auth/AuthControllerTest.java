@@ -1,6 +1,7 @@
 package com.replyboard.api.controller.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.replyboard.ControllerTestSupport;
 import com.replyboard.config.TestSecurityConfig;
 import com.replyboard.api.controller.auth.request.SignupRequest;
 import com.replyboard.api.service.auth.AuthService;
@@ -23,19 +24,19 @@ import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ActiveProfiles("test")
-@WebMvcTest(AuthController.class)
-@Import(TestSecurityConfig.class)
-class AuthControllerTest {
+//@ActiveProfiles("test")
+//@WebMvcTest(AuthController.class)
+//@Import(TestSecurityConfig.class)
+class AuthControllerTest extends ControllerTestSupport {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private AuthService authService;
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @Autowired
+//    private ObjectMapper objectMapper;
+//
+//    @MockBean
+//    private AuthService authService;
 
     @DisplayName("회원 가입 성공")
     @Test
@@ -50,7 +51,6 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -73,7 +73,6 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -93,7 +92,6 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -113,7 +111,6 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -133,7 +130,6 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -155,7 +151,6 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(5000))

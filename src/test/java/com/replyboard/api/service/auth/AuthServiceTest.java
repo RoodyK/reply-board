@@ -1,26 +1,20 @@
 package com.replyboard.api.service.auth;
 
+import com.replyboard.IntegrationTestSupport;
 import com.replyboard.api.controller.auth.request.SignupRequest;
 import com.replyboard.domain.member.Member;
 import com.replyboard.domain.member.MemberRepository;
 import com.replyboard.exception.DuplicatedMemberException;
 import com.replyboard.exception.InvalidRequestException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
-class AuthServiceTest {
+class AuthServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private AuthService authService;

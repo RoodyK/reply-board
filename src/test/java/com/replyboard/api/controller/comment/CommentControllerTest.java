@@ -1,6 +1,7 @@
 package com.replyboard.api.controller.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.replyboard.ControllerTestSupport;
 import com.replyboard.api.controller.comment.request.CreateCommentRequest;
 import com.replyboard.api.controller.comment.request.EditCommentRequest;
 import com.replyboard.api.controller.comment.request.RemoveCommentRequest;
@@ -31,18 +32,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CommentController.class)
-@Import(TestSecurityConfig.class)
-class CommentControllerTest {
+//@WebMvcTest(CommentController.class)
+//@Import(TestSecurityConfig.class)
+class CommentControllerTest extends ControllerTestSupport {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private CommentService commentService;
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @Autowired
+//    private ObjectMapper objectMapper;
+//
+//    @MockBean
+//    private CommentService commentService;
     
     @DisplayName("댓글을 등록한다.")
     @Test
@@ -62,7 +63,6 @@ class CommentControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(request))
         )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -89,7 +89,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -113,7 +112,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -137,7 +135,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -164,7 +161,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -190,7 +186,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -217,7 +212,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -241,7 +235,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -265,7 +258,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -292,7 +284,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -318,7 +309,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -344,7 +334,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -368,7 +357,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -392,7 +380,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -417,7 +404,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -441,7 +427,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -466,7 +451,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -491,7 +475,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -514,7 +497,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -537,7 +519,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -563,7 +544,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -588,7 +568,6 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))

@@ -50,16 +50,11 @@ spring:
     activate:
       on-profile: test
 
-#  datasource:
-#    url: jdbc:h2:mem:replyboard
-#    driver-class-name: org.h2.Driver
-#    username: sa
-#    password:
   datasource:
-    url: jdbc:mysql://localhost:3306/reply_board
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: board
-    password: board1234
+    url: jdbc:h2:mem:replyboard
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
 
   jpa:
     hibernate:

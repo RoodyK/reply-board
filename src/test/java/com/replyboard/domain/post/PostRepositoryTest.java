@@ -1,8 +1,8 @@
 package com.replyboard.domain.post;
 
+import com.replyboard.IntegrationTestSupport;
 import com.replyboard.api.controller.post.request.CreatePostRequest;
 import com.replyboard.api.controller.post.request.PostSearch;
-import com.replyboard.api.service.post.PostService;
 import com.replyboard.domain.category.Category;
 import com.replyboard.domain.category.CategoryRepository;
 import com.replyboard.domain.member.Member;
@@ -10,28 +10,19 @@ import com.replyboard.domain.member.MemberRepository;
 import com.replyboard.domain.member.Role;
 import com.replyboard.exception.PostNotFoundException;
 import org.assertj.core.groups.Tuple;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
-class PostRepositoryTest {
+class PostRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     private MemberRepository memberRepository;

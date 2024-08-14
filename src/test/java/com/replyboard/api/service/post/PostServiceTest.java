@@ -1,5 +1,6 @@
 package com.replyboard.api.service.post;
 
+import com.replyboard.IntegrationTestSupport;
 import com.replyboard.api.controller.post.request.CreatePostRequest;
 import com.replyboard.api.controller.post.request.EditPostRequest;
 import com.replyboard.api.controller.post.request.PostSearch;
@@ -21,10 +22,7 @@ import com.replyboard.exception.PostNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -33,10 +31,7 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.*;
 
 
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
-class PostServiceTest {
+class PostServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private PostService postService;

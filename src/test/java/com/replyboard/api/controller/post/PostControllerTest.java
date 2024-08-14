@@ -1,6 +1,7 @@
 package com.replyboard.api.controller.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.replyboard.ControllerTestSupport;
 import com.replyboard.api.controller.post.request.CreatePostRequest;
 import com.replyboard.api.controller.post.request.EditPostRequest;
 import com.replyboard.api.controller.post.request.PostSearch;
@@ -25,6 +26,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -38,18 +40,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(PostController.class)
-@Import(TestSecurityConfig.class)
-class PostControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+//@WebMvcTest(PostController.class)
+//@Import(TestSecurityConfig.class)
+class PostControllerTest extends ControllerTestSupport {
 
-    @MockBean
-    private PostService postService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @MockBean
+//    private PostService postService;
+//
+//    @Autowired
+//    private ObjectMapper objectMapper;
 
     @DisplayName("게시글 전체 목록을 조회한다. 패이지가 없으면 1페이지가 출력된다.")
     @Test
@@ -67,7 +70,6 @@ class PostControllerTest {
         // when
         mockMvc.perform(get("/api/v1/posts")
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -108,7 +110,6 @@ class PostControllerTest {
         mockMvc.perform(get("/api/v1/posts")
                         .param("page", "-1")
         )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -133,7 +134,6 @@ class PostControllerTest {
         mockMvc.perform(get("/api/v1/posts")
                         .param("searchValue", "여름")
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -167,7 +167,6 @@ class PostControllerTest {
         mockMvc.perform(get("/api/v1/categories/{categoryId}/posts", 1L)
                         .param("searchValue", "여름")
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -201,7 +200,6 @@ class PostControllerTest {
         mockMvc.perform(get("/api/v1/categories/{categoryId}/posts", 1L)
                         .param("page", "-1")
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -230,7 +228,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -257,7 +254,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -282,7 +278,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -307,7 +302,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -335,7 +329,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -362,7 +355,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -377,7 +369,6 @@ class PostControllerTest {
         // when
         mockMvc.perform(delete("/api/v1/posts/{postId}", 1L)
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -396,7 +387,6 @@ class PostControllerTest {
         // when
         mockMvc.perform(delete("/api/v1/posts/{postId}", 1L)
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -424,7 +414,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -452,7 +441,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -478,7 +466,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1000))
@@ -507,7 +494,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -535,7 +521,6 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
@@ -567,7 +552,6 @@ class PostControllerTest {
         mockMvc.perform(get("/api/v1/posts/{postId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value(true))
                 .andExpect(jsonPath("$.code").value(200))
@@ -597,7 +581,6 @@ class PostControllerTest {
         mockMvc.perform(get("/api/v1/posts/{postId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                 )
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
