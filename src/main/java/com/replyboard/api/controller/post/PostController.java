@@ -8,6 +8,7 @@ import com.replyboard.api.dto.MemberDto;
 import com.replyboard.api.dto.PagingResponse;
 import com.replyboard.api.security.auth.CustomUserDetails;
 import com.replyboard.api.service.post.PostService;
+import com.replyboard.api.service.post.response.PostDetailResponse;
 import com.replyboard.api.service.post.response.PostResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,24 @@ public class PostController {
             @Valid @ModelAttribute PostSearch postSearch
     ) {
         PagingResponse<PostResponse> response = postService.getPostList(categoryId, postSearch);
+
+        return ResponseEntity.ok().body(ApiDataResponse.of(response));
+    }
+
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity<ApiDataResponse<PostDetailResponse>> getPost(@PathVariable("postId") Long postId) {
+        PostDetailResponse response = postService.getPost(postId);
+
+        return ResponseEntity.ok().body(ApiDataResponse.of(response));
+    }
+
+    @GetMapping("/posts/{postId}/private")
+    public ResponseEntity<ApiDataResponse<PostDetailResponse>> getPostPrivate(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("postId") Long postId
+    ) {
+        MemberDto memberDto = userDetails.getMemberDto();
+        PostDetailResponse response = postService.getPostPrivate(postId, memberDto.getId());
 
         return ResponseEntity.ok().body(ApiDataResponse.of(response));
     }

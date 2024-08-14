@@ -64,6 +64,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/posts").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/posts").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/posts").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/posts/{postId}/private").hasAnyRole("ADMIN", "USER")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(customUsernamePasswordAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)

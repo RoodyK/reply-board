@@ -8,6 +8,7 @@ import com.replyboard.domain.category.CategoryRepository;
 import com.replyboard.domain.member.Member;
 import com.replyboard.domain.member.MemberRepository;
 import com.replyboard.domain.member.Role;
+import com.replyboard.exception.PostNotFoundException;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -119,17 +120,6 @@ class PostRepositoryTest {
                 );
     }
 
-    private void createPost(Member member, Category category1, Category category2, Category category3) {
-        IntStream.range(1, 31)
-                .mapToObj(i -> {
-                    CreatePostRequest postRequest = createPostRequest("제목" + i, "내용" + i);
-                    if (i % 3 == 1) return Post.createPost(postRequest.toServiceRequest().toPostDto(), member, category1);
-                    if (i % 3 == 2) return Post.createPost(postRequest.toServiceRequest().toPostDto(), member, category2);
-                    return Post.createPost(postRequest.toServiceRequest().toPostDto(), member, category3);
-                })
-                .forEach(post -> postRepository.save(post));
-    }
-
     @DisplayName("카테고리별 전체 게시글을 최신글을 기준으로 페이징 처리해서 조회한다.")
     @Test
     void findPostListByCategory() {
@@ -189,6 +179,42 @@ class PostRepositoryTest {
                         Tuple.tuple("제목24", "내용24", "기타3"),
                         Tuple.tuple("제목21", "내용21", "기타3")
                 );
+    }
+
+    @DisplayName("게시글을 단건 조회한다.")
+    @Test
+    void findByPost() {
+        // given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Category category = createCategory("기타", member);
+        categoryRepository.save(category);
+
+        CreatePostRequest postRequest = createPostRequest("무더위", "날씨가 이상해요");
+        Post post = Post.createPost(postRequest.toServiceRequest().toPostDto(), member, category);
+        postRepository.save(post);
+
+        // when
+        Post findPost = postRepository.findByPost(post.getId()).orElseThrow(PostNotFoundException::new);
+
+        // then
+        assertThat(findPost).isNotNull();
+        assertThat(findPost.getCategory().getName()).isEqualTo("기타");
+        assertThat(findPost.getMember().getName()).isEqualTo("루디");
+        assertThat(findPost.getTitle()).isEqualTo("무더위");
+        assertThat(findPost.getContent()).isEqualTo("날씨가 이상해요");
+    }
+
+    private void createPost(Member member, Category category1, Category category2, Category category3) {
+        IntStream.range(1, 31)
+                .mapToObj(i -> {
+                    CreatePostRequest postRequest = createPostRequest("제목" + i, "내용" + i);
+                    if (i % 3 == 1) return Post.createPost(postRequest.toServiceRequest().toPostDto(), member, category1);
+                    if (i % 3 == 2) return Post.createPost(postRequest.toServiceRequest().toPostDto(), member, category2);
+                    return Post.createPost(postRequest.toServiceRequest().toPostDto(), member, category3);
+                })
+                .forEach(post -> postRepository.save(post));
     }
 
     private CreatePostRequest createPostRequest(String title, String content) {

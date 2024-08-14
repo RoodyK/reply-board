@@ -4,7 +4,7 @@ import com.replyboard.api.controller.post.request.CreatePostRequest;
 import com.replyboard.api.controller.post.request.EditPostRequest;
 import com.replyboard.api.controller.post.request.PostSearch;
 import com.replyboard.api.dto.PagingResponse;
-import com.replyboard.api.service.post.request.CreatePostServiceRequest;
+import com.replyboard.api.service.post.response.PostDetailResponse;
 import com.replyboard.api.service.post.response.PostResponse;
 import com.replyboard.config.CustomProperties;
 import com.replyboard.domain.category.Category;
@@ -18,7 +18,6 @@ import com.replyboard.domain.post.PostStatus;
 import com.replyboard.exception.CategoryNotFoundException;
 import com.replyboard.exception.MemberNotFoundException;
 import com.replyboard.exception.PostNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,7 +161,7 @@ class PostServiceTest {
     @DisplayName("키테고리별 게시글 조회 시 게시글은 최신순으로 정렬된다.")
     @Test
     void postListByCategory() {
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category1 = createCategory("기타1", member);
@@ -201,7 +200,7 @@ class PostServiceTest {
     @DisplayName("키테고리별 게시글 조회 시 검색어를 입력하면 해당 게시글만 출력된다.")
     @Test
     void postListByCategorySearchValue() {
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category1 = createCategory("기타1", member);
@@ -235,7 +234,7 @@ class PostServiceTest {
     @DisplayName("키테고리별 게시글 조회 시 페이지 번호가 음수면 1페이지가 출력된다.")
     @Test
     void postListByCategoryNegativePageNumber() {
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category1 = createCategory("기타1", member);
@@ -275,7 +274,7 @@ class PostServiceTest {
     @Test
     void addPost() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -304,7 +303,7 @@ class PostServiceTest {
     @Test
     void addPostNotExistsMemberId() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -326,7 +325,7 @@ class PostServiceTest {
     @Test
     void addPostNotExistsCategory() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -348,7 +347,7 @@ class PostServiceTest {
     @Test
     void removePost() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -375,7 +374,7 @@ class PostServiceTest {
     @Test
     void removePostNotExistsPostId() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -400,7 +399,7 @@ class PostServiceTest {
     @Test
     void editPost() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -439,7 +438,7 @@ class PostServiceTest {
     @Test
     void editPostWithoutTitle() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -478,7 +477,7 @@ class PostServiceTest {
     @Test
     void editPostWithoutContent() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -517,7 +516,7 @@ class PostServiceTest {
     @Test
     void editPosSameCategory() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -554,7 +553,7 @@ class PostServiceTest {
     @Test
     void editPostNotExistsPost() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -585,7 +584,7 @@ class PostServiceTest {
     @Test
     void editPostNotExistsCategory() {
         // given
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category = createCategory("기타1", member);
@@ -613,8 +612,89 @@ class PostServiceTest {
                 .hasMessage("카테고리를 찾을 수 없습니다.");
     }
 
+    @DisplayName("게시글을 상세 조회한다.")
+    @Test
+    void getPost() {
+        // given
+        Member member = createMember("루디", "test@test.com");
+        memberRepository.save(member);
+
+        Category category = createCategory("기타1", member);
+        categoryRepository.save(category);
+
+        CreatePostRequest request = CreatePostRequest.builder()
+                .categoryId(category.getId())
+                .title("글 등록하기")
+                .content("첫 게시글 입니다.")
+                .build();
+
+        Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
+        postRepository.save(post);
+
+        // when
+        PostDetailResponse response = postService.getPost(post.getId());
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.getMemberName()).isEqualTo("루디");
+        assertThat(response.getCategoryName()).isEqualTo("기타1");
+        assertThat(response.getTitle()).isEqualTo("글 등록하기");
+        assertThat(response.getContent()).isEqualTo("첫 게시글 입니다.");
+    }
+
+    @DisplayName("게시글을 상세 조회할 때 게시글이 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void getPostNotExistsPost() {
+        // given
+        Member member = createMember("루디", "test@test.com");
+        memberRepository.save(member);
+
+        Category category = createCategory("기타1", member);
+        categoryRepository.save(category);
+
+        CreatePostRequest request = CreatePostRequest.builder()
+                .categoryId(category.getId())
+                .title("글 등록하기")
+                .content("첫 게시글 입니다.")
+                .build();
+
+        Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
+        postRepository.save(post);
+
+        // when
+        assertThatThrownBy(() -> postService.getPost(post.getId() + 1))
+                .isInstanceOf(PostNotFoundException.class)
+                .hasMessage("게시글을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("게시글을 상세 조회할 때 공개 게시글만 조회가 가능하다")
+    @Test
+    void getPostNotOwnPost() {
+        // given
+        Member member = createMember("루디", "test@test.com");
+        memberRepository.save(member);
+
+        Category category = createCategory("기타1", member);
+        categoryRepository.save(category);
+
+        Post post = Post.builder()
+                .title("글 등록하기")
+                .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PRIVATE)
+                .build();
+        post.addMember(member);
+        post.addCategory(category);
+
+        postRepository.save(post);
+
+        // when
+        assertThatThrownBy(() -> postService.getPost(post.getId()))
+                .isInstanceOf(PostNotFoundException.class)
+                .hasMessage("게시글을 찾을 수 없습니다.");
+    }
+
     private void createPostList() {
-        Member member = createMember();
+        Member member = createMember("루디", "test@test.com");
         memberRepository.save(member);
 
         Category category1 = createCategory("기타1", member);
@@ -667,10 +747,10 @@ class PostServiceTest {
                 .build();
     }
 
-    private Member createMember() {
+    private Member createMember(String name, String email) {
         Member member = Member.builder()
-                .name("루디")
-                .email("test@test.com")
+                .name(name)
+                .email(email)
                 .password(passwordEncoder.encode("1234"))
                 .build();
 

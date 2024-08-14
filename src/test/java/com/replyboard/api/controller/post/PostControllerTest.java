@@ -8,6 +8,7 @@ import com.replyboard.api.dto.PagingResponse;
 import com.replyboard.api.service.post.PostService;
 import com.replyboard.api.service.post.request.CreatePostServiceRequest;
 import com.replyboard.api.service.post.request.EditPostServiceRequest;
+import com.replyboard.api.service.post.response.PostDetailResponse;
 import com.replyboard.api.service.post.response.PostResponse;
 import com.replyboard.config.TestSecurityConfig;
 import com.replyboard.config.admin.CustomMockRoleAdmin;
@@ -539,6 +540,68 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.result").value(false))
                 .andExpect(jsonPath("$.code").value(1300))
                 .andExpect(jsonPath("$.message").value("카테고리를 찾을 수 없습니다."))
+        ;
+    }
+
+    @DisplayName("게시글을 단건 조회한다.")
+    @Test
+    void getPost() throws Exception {
+        // given
+        LocalDateTime currTime = LocalDateTime.now();
+        PostDetailResponse response = PostDetailResponse.builder()
+                .memberId(1L)
+                .memberName("호랑이")
+                .categoryId(1L)
+                .categoryName("날씨")
+                .id(1L)
+                .title("무더위")
+                .content("날씨가 덥습니다.")
+                .views(0)
+                .regDate(currTime)
+                .build();
+
+        BDDMockito.given(postService.getPost(anyLong()))
+                .willReturn(response);
+
+        // when
+        mockMvc.perform(get("/api/v1/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(true))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data.memberId").value(1L))
+                .andExpect(jsonPath("$.data.memberName").value("호랑이"))
+                .andExpect(jsonPath("$.data.categoryId").value(1L))
+                .andExpect(jsonPath("$.data.categoryName").value("날씨"))
+                .andExpect(jsonPath("$.data.id").value(1L))
+                .andExpect(jsonPath("$.data.title").value("무더위"))
+                .andExpect(jsonPath("$.data.content").value("날씨가 덥습니다."))
+                .andExpect(jsonPath("$.data.views").value(0))
+                .andExpect(jsonPath("$.data.regDate").value(currTime.toString()))
+        ;
+
+        BDDMockito.then(postService).should().getPost(anyLong());
+    }
+
+    @DisplayName("게시글을 단건 조회할 때 게시글이 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void getPostNotExistsPost() throws Exception {
+        // given
+        BDDMockito.given(postService.getPost(anyLong()))
+                .willThrow(new PostNotFoundException());
+
+        // when
+        mockMvc.perform(get("/api/v1/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                )
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1300))
+                .andExpect(jsonPath("$.message").value("게시글을 찾을 수 없습니다."))
         ;
     }
 

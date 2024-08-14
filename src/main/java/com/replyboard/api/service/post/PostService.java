@@ -1,10 +1,10 @@
 package com.replyboard.api.service.post;
 
-import com.replyboard.api.controller.post.request.CreatePostRequest;
 import com.replyboard.api.controller.post.request.PostSearch;
 import com.replyboard.api.dto.PagingResponse;
 import com.replyboard.api.service.post.request.CreatePostServiceRequest;
 import com.replyboard.api.service.post.request.EditPostServiceRequest;
+import com.replyboard.api.service.post.response.PostDetailResponse;
 import com.replyboard.api.service.post.response.PostResponse;
 import com.replyboard.domain.category.Category;
 import com.replyboard.domain.category.CategoryRepository;
@@ -13,12 +13,15 @@ import com.replyboard.domain.member.MemberRepository;
 import com.replyboard.domain.post.*;
 import com.replyboard.exception.CategoryNotFoundException;
 import com.replyboard.exception.MemberNotFoundException;
+import com.replyboard.exception.NotOwnPostException;
 import com.replyboard.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -46,6 +49,31 @@ public class PostService {
         Page<Post> postList = postRepository.findPostList(categoryId, postSearch);
 
         return new PagingResponse<>(postList, PostResponse.class);
+    }
+
+    public PostDetailResponse getPost(Long postId) {
+        Post post = postRepository.findByPost(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        return PostDetailResponse.of(post);
+    }
+
+    public PostDetailResponse getPostPrivate(Long postId, Long memberId) {
+        Post post = postRepository.findByPost(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        if (!Objects.equals(post.getMember().getId(), memberId)) {
+            throw new NotOwnPostException();
+        }
+
+        return PostDetailResponse.of(post);
+    }
+
+    public PostDetailResponse getPostPrivate(Long postId) {
+        Post post = postRepository.findByPost(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        return PostDetailResponse.of(post);
     }
 
     @Transactional
@@ -88,5 +116,13 @@ public class PostService {
                 .build();
 
         post.editPost(postEditDto, category);
+    }
+
+    @Transactional
+    public long incrementViews(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        return post.incrementViews();
     }
 }
