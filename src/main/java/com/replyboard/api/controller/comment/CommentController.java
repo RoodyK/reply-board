@@ -5,10 +5,13 @@ import com.replyboard.api.controller.comment.request.EditCommentRequest;
 import com.replyboard.api.controller.comment.request.RemoveCommentRequest;
 import com.replyboard.api.dto.ApiDataResponse;
 import com.replyboard.api.service.comment.CommentService;
+import com.replyboard.api.service.comment.response.CommentResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,6 +19,13 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
+
+    @GetMapping("/posts/{postId}/comments")
+    public ResponseEntity<ApiDataResponse<List<CommentResponse>>> getCommentList(@PathVariable("postId") Long postId) {
+        List<CommentResponse> commentList = commentService.getCommentList(postId);
+
+        return ResponseEntity.ok().body(ApiDataResponse.of(commentList));
+    }
 
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<ApiDataResponse<Long>> addComment(

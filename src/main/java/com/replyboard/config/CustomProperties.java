@@ -3,7 +3,6 @@ package com.replyboard.config;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
-import org.springframework.context.annotation.Configuration;
 
 @Getter
 @ConfigurationProperties(prefix = "api")

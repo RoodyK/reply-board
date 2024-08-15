@@ -1,9 +1,9 @@
 package com.replyboard.api.service.comment;
 
-import com.replyboard.api.controller.comment.request.EditCommentRequest;
 import com.replyboard.api.service.comment.request.CreateCommentServiceRequest;
 import com.replyboard.api.service.comment.request.EditCommentServiceRequest;
 import com.replyboard.api.service.comment.request.RemoveCommentServiceRequest;
+import com.replyboard.api.service.comment.response.CommentResponse;
 import com.replyboard.domain.comment.Comment;
 import com.replyboard.domain.comment.CommentRepository;
 import com.replyboard.domain.post.Post;
@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -26,6 +27,12 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public List<CommentResponse> getCommentList(Long postId) {
+        List<Comment> commentList = commentRepository.findByPostIdAndParentIsNull(postId);
+
+        return commentList.stream().map(CommentResponse::new).toList();
+    }
 
     @Transactional
     public Long addComment(Long postId, CreateCommentServiceRequest request) {

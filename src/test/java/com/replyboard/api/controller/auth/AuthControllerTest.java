@@ -1,42 +1,22 @@
 package com.replyboard.api.controller.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.replyboard.ControllerTestSupport;
-import com.replyboard.config.TestSecurityConfig;
 import com.replyboard.api.controller.auth.request.SignupRequest;
-import com.replyboard.api.service.auth.AuthService;
 import com.replyboard.api.service.auth.request.SignupServiceRequest;
 import com.replyboard.exception.DuplicatedMemberException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@ActiveProfiles("test")
-//@WebMvcTest(AuthController.class)
-//@Import(TestSecurityConfig.class)
+
 class AuthControllerTest extends ControllerTestSupport {
-
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @Autowired
-//    private ObjectMapper objectMapper;
-//
-//    @MockBean
-//    private AuthService authService;
 
     @DisplayName("회원 가입 성공")
     @Test

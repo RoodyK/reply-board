@@ -49,13 +49,13 @@ public class PostController {
         return ResponseEntity.ok().body(ApiDataResponse.of(response));
     }
 
-    @GetMapping("/posts/{postId}/private")
-    public ResponseEntity<ApiDataResponse<PostDetailResponse>> getPostPrivate(
+    @GetMapping("/posts/{postId}/member")
+    public ResponseEntity<ApiDataResponse<PostDetailResponse>> getMemberWritePost(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("postId") Long postId
     ) {
         MemberDto memberDto = userDetails.getMemberDto();
-        PostDetailResponse response = postService.getPostPrivate(postId, memberDto.getId());
+        PostDetailResponse response = postService.getMemberWritePost(postId, memberDto.getId());
 
         return ResponseEntity.ok().body(ApiDataResponse.of(response));
     }

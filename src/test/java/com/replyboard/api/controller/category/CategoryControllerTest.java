@@ -1,15 +1,12 @@
 package com.replyboard.api.controller.category;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.replyboard.ControllerTestSupport;
+import com.replyboard.api.controller.category.request.CreateCategoryRequest;
 import com.replyboard.api.controller.category.request.EditCategoryRequest;
 import com.replyboard.api.service.category.request.CreateCategoryServiceRequest;
 import com.replyboard.api.service.category.request.EditCategoryServiceRequest;
 import com.replyboard.api.service.category.response.CategoryResponse;
 import com.replyboard.config.admin.CustomMockRoleAdmin;
-import com.replyboard.config.TestSecurityConfig;
-import com.replyboard.api.controller.category.request.CreateCategoryRequest;
-import com.replyboard.api.service.category.CategoryService;
 import com.replyboard.config.user.CustomMockRoleUser;
 import com.replyboard.exception.CategoryNotFoundException;
 import com.replyboard.exception.DuplicatedCategoryException;
@@ -17,34 +14,17 @@ import com.replyboard.exception.MemberNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@ActiveProfiles("test")
-//@WebMvcTest(CategoryController.class)
-//@Import(TestSecurityConfig.class)
 class CategoryControllerTest extends ControllerTestSupport {
-
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @Autowired
-//    private ObjectMapper objectMapper;
-//
-//    @MockBean
-//    private CategoryService categoryService;
 
     @CustomMockRoleAdmin
     @DisplayName("카테고리를 등록한다.")

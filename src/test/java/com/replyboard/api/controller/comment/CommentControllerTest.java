@@ -1,50 +1,105 @@
 package com.replyboard.api.controller.comment;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.replyboard.ControllerTestSupport;
 import com.replyboard.api.controller.comment.request.CreateCommentRequest;
 import com.replyboard.api.controller.comment.request.EditCommentRequest;
 import com.replyboard.api.controller.comment.request.RemoveCommentRequest;
-import com.replyboard.api.service.comment.CommentService;
 import com.replyboard.api.service.comment.request.CreateCommentServiceRequest;
 import com.replyboard.api.service.comment.request.EditCommentServiceRequest;
 import com.replyboard.api.service.comment.request.RemoveCommentServiceRequest;
-import com.replyboard.config.TestSecurityConfig;
+import com.replyboard.api.service.comment.response.CommentResponse;
 import com.replyboard.exception.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@WebMvcTest(CommentController.class)
-//@Import(TestSecurityConfig.class)
 class CommentControllerTest extends ControllerTestSupport {
 
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @Autowired
-//    private ObjectMapper objectMapper;
-//
-//    @MockBean
-//    private CommentService commentService;
-    
+    @DisplayName("댓글 전체 목록을 조회한다")
+    @Test
+    void getCommentList() throws Exception {
+        // given
+        CommentResponse reply1 = createComment(
+                2L, 1L, "파도", "1234", "저도 공감합니다.", null);
+
+        CommentResponse reply2 = createComment(
+                3L, 1L, "리플러", "1234", "공감합니다.", null);
+
+        List<CommentResponse> replies = List.of(reply1, reply2);
+
+        CommentResponse commentResponse = createComment(
+                1L, null, "노을", "1234", "유용한 정보입니다.", replies);
+
+        BDDMockito.given(commentService.getCommentList(anyLong()))
+                .willReturn(List.of(commentResponse));
+
+        // when
+        mockMvc.perform(get("/api/v1/posts/{postId}/comments", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(true))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].id").value(1L))
+                .andExpect(jsonPath("$.data[0].parentId").isEmpty())
+                .andExpect(jsonPath("$.data[0].author").value("노을"))
+                .andExpect(jsonPath("$.data[0].password").value("1234"))
+                .andExpect(jsonPath("$.data[0].content").value("유용한 정보입니다."))
+                .andExpect(jsonPath("$.data[0].replies.length()").value(2))
+                .andExpect(jsonPath("$.data[0].replies[0].id").value(2L))
+                .andExpect(jsonPath("$.data[0].replies[0].parentId").value(1L))
+                .andExpect(jsonPath("$.data[0].replies[0].author").value("파도"))
+                .andExpect(jsonPath("$.data[0].replies[0].password").value("1234"))
+                .andExpect(jsonPath("$.data[0].replies[0].content").value("저도 공감합니다."))
+                .andExpect(jsonPath("$.data[0].replies[0].replies").isEmpty())
+                .andExpect(jsonPath("$.data[0].replies[1].id").value(3L))
+                .andExpect(jsonPath("$.data[0].replies[1].parentId").value(1L))
+                .andExpect(jsonPath("$.data[0].replies[1].author").value("리플러"))
+                .andExpect(jsonPath("$.data[0].replies[1].password").value("1234"))
+                .andExpect(jsonPath("$.data[0].replies[1].content").value("공감합니다."))
+                .andExpect(jsonPath("$.data[0].replies[1].replies").isEmpty())
+                ;
+    }
+
+    @DisplayName("댓글 전체 목록을 조회할 때 댓글이 하나도 없으면 data는 빈 배열이다.")
+    @Test
+    void getCommentListIsEmpty() throws Exception {
+        // given
+        BDDMockito.given(commentService.getCommentList(anyLong()))
+                .willReturn(List.of());
+
+        // when
+        mockMvc.perform(get("/api/v1/posts/{postId}/comments", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(true))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data").isEmpty())
+        ;
+    }
+
+    private static CommentResponse createComment(
+            long id, Long parentId, String author, String password, String content, List<CommentResponse> replies
+    ) {
+        return CommentResponse.builder()
+                .id(id)
+                .parentId(parentId)
+                .author(author)
+                .password(password)
+                .content(content)
+                .replies(replies)
+                .build();
+    }
+
     @DisplayName("댓글을 등록한다.")
     @Test
     void addComment() throws Exception {

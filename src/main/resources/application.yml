@@ -15,7 +15,7 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
+#    org.hibernate.orm.jdbc.bind: trace
 
 api:
   url-prefix: /api/v1
@@ -42,6 +42,7 @@ spring:
     properties:
       hibernate:
         format_sql: true  # 출력되는 SQL 쿼리를 포맷팅하여 보기 좋게 표시
+        default_batch_fetch_size: 1000 # IN query 갯수
 
 ---
 
@@ -62,3 +63,4 @@ spring:
     properties:
       hibernate:
         format_sql: true  # 출력되는 SQL 쿼리를 포맷팅하여 보기 좋게 표시
+        default_batch_fetch_size: 1000 # IN query 갯수

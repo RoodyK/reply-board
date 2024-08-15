@@ -1,6 +1,5 @@
 package com.replyboard.api.controller.category.request;
 
-import com.replyboard.api.service.category.request.CreateCategoryServiceRequest;
 import com.replyboard.api.service.category.request.EditCategoryServiceRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;

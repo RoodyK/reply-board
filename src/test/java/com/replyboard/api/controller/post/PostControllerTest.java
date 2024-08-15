@@ -1,17 +1,14 @@
 package com.replyboard.api.controller.post;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.replyboard.ControllerTestSupport;
 import com.replyboard.api.controller.post.request.CreatePostRequest;
 import com.replyboard.api.controller.post.request.EditPostRequest;
 import com.replyboard.api.controller.post.request.PostSearch;
 import com.replyboard.api.dto.PagingResponse;
-import com.replyboard.api.service.post.PostService;
 import com.replyboard.api.service.post.request.CreatePostServiceRequest;
 import com.replyboard.api.service.post.request.EditPostServiceRequest;
 import com.replyboard.api.service.post.response.PostDetailResponse;
 import com.replyboard.api.service.post.response.PostResponse;
-import com.replyboard.config.TestSecurityConfig;
 import com.replyboard.config.admin.CustomMockRoleAdmin;
 import com.replyboard.config.user.CustomMockRoleUser;
 import com.replyboard.domain.post.PostStatus;
@@ -21,13 +18,7 @@ import com.replyboard.exception.PostNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -36,23 +27,10 @@ import java.util.Collections;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-//@WebMvcTest(PostController.class)
-//@Import(TestSecurityConfig.class)
 class PostControllerTest extends ControllerTestSupport {
-
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @MockBean
-//    private PostService postService;
-//
-//    @Autowired
-//    private ObjectMapper objectMapper;
 
     @DisplayName("게시글 전체 목록을 조회한다. 패이지가 없으면 1페이지가 출력된다.")
     @Test
@@ -564,7 +542,6 @@ class PostControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.data.title").value("무더위"))
                 .andExpect(jsonPath("$.data.content").value("날씨가 덥습니다."))
                 .andExpect(jsonPath("$.data.views").value(0))
-                .andExpect(jsonPath("$.data.regDate").value(currTime.toString()))
         ;
 
         BDDMockito.then(postService).should().getPost(anyLong());

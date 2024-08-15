@@ -30,7 +30,7 @@ public class Comment extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,16 +60,17 @@ public class Comment extends BaseEntity {
     }
 
     public static Comment createReply(CommentDto commentDto, Post post, Comment parentComment) {
-        Comment comment = Comment.builder()
+        Comment reply = Comment.builder()
                 .author(commentDto.getAuthor())
                 .password(commentDto.getPassword())
                 .content(commentDto.getContent())
                 .build();
 
-        post.addComment(comment);
-        comment.addParentComment(parentComment);
+        post.addComment(reply);
+        parentComment.addReply(reply);
+//        reply.addParentComment(parentComment);
 
-        return comment;
+        return reply;
     }
 
     public void addParentComment(Comment parent) {
@@ -78,6 +79,11 @@ public class Comment extends BaseEntity {
 
     public void addPost(Post post) {
         this.post = post;
+    }
+
+    public void addReply(Comment reply) {
+        this.replies.add(reply);
+        reply.addParentComment(this);
     }
 
     public void editComment(String content) {

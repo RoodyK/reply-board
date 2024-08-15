@@ -1,6 +1,5 @@
 package com.replyboard.api.controller.comment.request;
 
-import com.replyboard.api.service.comment.request.CreateCommentServiceRequest;
 import com.replyboard.api.service.comment.request.EditCommentServiceRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;

@@ -10,7 +10,9 @@ import com.replyboard.domain.category.Category;
 import com.replyboard.domain.category.CategoryRepository;
 import com.replyboard.domain.member.Member;
 import com.replyboard.domain.member.MemberRepository;
-import com.replyboard.domain.post.*;
+import com.replyboard.domain.post.Post;
+import com.replyboard.domain.post.PostEditDto;
+import com.replyboard.domain.post.PostRepository;
 import com.replyboard.exception.CategoryNotFoundException;
 import com.replyboard.exception.MemberNotFoundException;
 import com.replyboard.exception.NotOwnPostException;
@@ -58,8 +60,11 @@ public class PostService {
         return PostDetailResponse.of(post);
     }
 
-    public PostDetailResponse getPostPrivate(Long postId, Long memberId) {
-        Post post = postRepository.findByPost(postId)
+    /**
+     * 회원이 자신의 게시글(비공개, 차단 포함) 조회
+     */
+    public PostDetailResponse getMemberWritePost(Long postId, Long memberId) {
+        Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
         validMemberId(memberId, post.getMember().getId());

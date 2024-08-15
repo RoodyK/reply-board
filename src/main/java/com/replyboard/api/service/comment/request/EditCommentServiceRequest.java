@@ -1,6 +1,5 @@
 package com.replyboard.api.service.comment.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 

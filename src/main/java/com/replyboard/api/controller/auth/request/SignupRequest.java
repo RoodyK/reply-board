@@ -1,7 +1,6 @@
 package com.replyboard.api.controller.auth.request;
 
 import com.replyboard.api.service.auth.request.SignupServiceRequest;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;

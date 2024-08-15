@@ -4,6 +4,7 @@ import com.replyboard.IntegrationTestSupport;
 import com.replyboard.api.controller.comment.request.CreateCommentRequest;
 import com.replyboard.api.controller.comment.request.EditCommentRequest;
 import com.replyboard.api.controller.comment.request.RemoveCommentRequest;
+import com.replyboard.api.service.comment.response.CommentResponse;
 import com.replyboard.domain.category.Category;
 import com.replyboard.domain.category.CategoryRepository;
 import com.replyboard.domain.comment.Comment;
@@ -15,6 +16,8 @@ import com.replyboard.domain.post.Post;
 import com.replyboard.domain.post.PostRepository;
 import com.replyboard.domain.post.PostStatus;
 import com.replyboard.exception.*;
+import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +28,9 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.groups.Tuple.tuple;
 
+@Slf4j
 class CommentServiceTest extends IntegrationTestSupport {
 
     @Autowired
@@ -45,6 +50,75 @@ class CommentServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EntityManager em;
+
+    @DisplayName("게시글의 댓글목록을 조회한다")
+    @Test
+    void getCommentList() {
+        // given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Category category = createCategory("기타", member);
+        categoryRepository.save(category);
+
+        Post post = createPost(member, category);
+        postRepository.save(post);
+
+        Comment comment1 = createComment(post, "노을", "1234", "좋은 글입니다.");
+        Comment comment2 = createComment(post, "김밥", "12345", "유용한 정보입니다.");
+        commentRepository.saveAll(List.of(comment1, comment2));
+
+        Comment reply1 = createComment(post, "리플러", "1234", "답변 남깁니다.");
+        comment1.addReply(reply1);
+
+        Comment reply2 = createComment(post, "방랑가", "1234", "포스팅 감사합니다.");
+        comment1.addReply(reply2);
+
+        Comment reply3 = createComment(post, "파도", "1234", "좋은 정보 감사합니다.");
+        comment2.addReply(reply3);
+
+        Comment reply4 = createComment(post, "새벽", "1234", "유용한 내용입니다.");
+        comment2.addReply(reply4);
+
+        commentRepository.saveAll(List.of(reply1, reply2, reply3, reply4));
+
+        em.flush();
+        em.clear();
+
+        // when
+        List<CommentResponse> response = commentService.getCommentList(post.getId());
+
+//        response.forEach(r -> {
+//            log.info("outer : {}", r);
+//            r.getReplies().forEach(rr -> log.info("inner : {}", rr));
+//        });
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response).hasSize(2)
+                .extracting("author", "content")
+                .containsExactlyInAnyOrder(
+                        tuple("노을", "좋은 글입니다."),
+                        tuple("김밥", "유용한 정보입니다.")
+                );
+
+        assertThat(response.get(0).getReplies()).hasSize(2)
+                .extracting("author", "content")
+                .containsExactlyInAnyOrder(
+                        tuple("리플러", "답변 남깁니다."),
+                        tuple("방랑가", "포스팅 감사합니다.")
+                );
+
+        assertThat(response.get(1).getReplies()).hasSize(2)
+                .extracting("author", "content")
+                .containsExactlyInAnyOrder(
+                        tuple("파도", "좋은 정보 감사합니다."),
+                        tuple("새벽", "유용한 내용입니다.")
+                );
+    }
 
     @DisplayName("댓글을 등록한다")
     @Test

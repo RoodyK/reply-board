@@ -1,12 +1,8 @@
 package com.replyboard.api.dto;
 
-import com.replyboard.constant.ResultCode;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
-import java.util.Optional;
-
-import static com.replyboard.constant.ResultCode.*;
+import static com.replyboard.constant.ResultCode.OK;
 
 @Getter
 public class ApiDataResponse<T> extends ApiResponse{
