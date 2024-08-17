@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,6 +28,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         MemberDto memberDto = userDetails.getMemberDto();
         log.info("memberDto = {}", memberDto);
+
+        String sessionId = request.getSession().getId();
+        LocalDateTime sessionExpiryTime = LocalDateTime.now().plusSeconds(request.getSession().getMaxInactiveInterval());
+
+        log.info("[로그인 성공] 세션 아이디 : {}", sessionId);
+        log.info("[로그인 성공] 세션 만료시간 : {}", sessionExpiryTime);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
