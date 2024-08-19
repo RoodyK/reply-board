@@ -24,9 +24,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName(); // email
         String credentials = (String) authentication.getCredentials(); // password
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
 
-        if (passwordEncoder.matches(credentials, userDetails.getPassword())) {
+        if (!passwordEncoder.matches(credentials, userDetails.getPassword())) {
             throw new InvalidRequestException("회원 정보가 일치하지 않습니다.");
         }
 

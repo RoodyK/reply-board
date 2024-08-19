@@ -31,8 +31,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
             LoginDto loginDto = objectMapper.readValue(request.getInputStream(), LoginDto.class);
-
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
 
             setDetails(request, token);
             return this.getAuthenticationManager().authenticate(token);
@@ -46,7 +45,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     @AllArgsConstructor
     static class LoginDto {
 
-        private String username;
+        private String email;
         private String password;
     }
 }
