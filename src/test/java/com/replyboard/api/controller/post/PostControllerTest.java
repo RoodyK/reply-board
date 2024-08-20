@@ -360,7 +360,7 @@ class PostControllerTest extends ControllerTestSupport {
     @Test
     void removePostNotExistsPost() throws Exception {
         // given
-        BDDMockito.willThrow(new PostNotFoundException()).given(postService).removePost(anyLong());
+        BDDMockito.willThrow(new PostNotFoundException()).given(postService).removePost(anyLong(), anyLong());
 
         // when
         mockMvc.perform(delete("/api/v1/posts/{postId}", 1L)

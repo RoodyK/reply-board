@@ -55,6 +55,7 @@ public class SecurityConfig {
         http
                 .securityMatcher("/api/v1/**")
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
                         .requestMatchers("/api/v1/categories").hasRole("ADMIN")
                         .requestMatchers("/api/v1/categories/{categoryId}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/posts").hasAnyRole("ADMIN", "USER")
@@ -66,7 +67,10 @@ public class SecurityConfig {
                 .addFilterBefore(customUsernamePasswordAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .logout(logout -> logout.logoutUrl(customProperties.getLogoutUrl()))
+                .logout(logout -> logout
+                        .logoutUrl(customProperties.getLogoutUrl())
+                        .logoutSuccessUrl("/")
+                )
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint(objectMapper))
                         .accessDeniedHandler(new CustomAccessDeniedHandler(objectMapper))

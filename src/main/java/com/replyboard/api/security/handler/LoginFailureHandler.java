@@ -28,6 +28,6 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        objectMapper.writeValue(response.getWriter(), ApiErrorResponse.of(false, ResultCode.UNAUTHORIZED, "회원정보가 일치하지 않습니다."));
+        objectMapper.writeValue(response.getWriter(), ApiErrorResponse.of(false, ResultCode.UNAUTHORIZED, exception.getMessage()));
     }
 }

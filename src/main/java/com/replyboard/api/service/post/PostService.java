@@ -88,12 +88,15 @@ public class PostService {
     }
 
     @Transactional
-    public void removePost(Long postId) {
+    public void removePost(Long postId, Long memberId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
+        validMemberId(memberId, post.getMember().getId());
+
         postRepository.delete(post);
     }
+
 
     @Transactional
     public void editPost(Long postId, Long memberId, EditPostServiceRequest request) {

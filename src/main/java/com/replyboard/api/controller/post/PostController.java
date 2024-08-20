@@ -72,8 +72,12 @@ public class PostController {
     }
 
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<ApiDataResponse<Void>> removePost(@PathVariable("postId") Long postId) {
-        postService.removePost(postId);
+    public ResponseEntity<ApiDataResponse<Void>> removePost(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("postId") Long postId
+    ) {
+        MemberDto memberDto = userDetails.getMemberDto();
+        postService.removePost(postId, memberDto.getId());
 
         return ResponseEntity.ok().body(ApiDataResponse.empty());
     }

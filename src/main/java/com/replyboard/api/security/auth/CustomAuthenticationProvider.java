@@ -1,5 +1,6 @@
 package com.replyboard.api.security.auth;
 
+import com.replyboard.api.security.exception.PasswordNotMatchException;
 import com.replyboard.exception.InvalidRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Slf4j
@@ -27,7 +29,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
 
         if (!passwordEncoder.matches(credentials, userDetails.getPassword())) {
-            throw new InvalidRequestException("회원 정보가 일치하지 않습니다.");
+            throw new PasswordNotMatchException("회원정보가 일치하지 않습니다.");
         }
 
         return new UsernamePasswordAuthenticationToken(userDetails, credentials, userDetails.getAuthorities());

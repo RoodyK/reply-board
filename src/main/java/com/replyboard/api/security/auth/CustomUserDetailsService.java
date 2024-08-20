@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Member member = memberRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("회원 정보가 일치하지 않습니다."));
+                .orElseThrow(() -> new UsernameNotFoundException("회원정보가 일치하지 않습니다."));
 
         MemberDto memberDto = MemberDto.of(member);
 

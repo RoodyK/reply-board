@@ -358,7 +358,7 @@ class PostServiceTest extends IntegrationTestSupport {
         postRepository.save(post);
 
         // when
-        postService.removePost(post.getId());
+        postService.removePost(post.getId(), member.getId());
 
         // then
         List<Post> postList = postRepository.findAll();
@@ -385,7 +385,7 @@ class PostServiceTest extends IntegrationTestSupport {
         postRepository.save(post);
 
         // when
-        assertThatThrownBy(() -> postService.removePost(post.getId() + 1L))
+        assertThatThrownBy(() -> postService.removePost(post.getId() + 1L, member.getId()))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessage("게시글을 찾을 수 없습니다.");
     }
