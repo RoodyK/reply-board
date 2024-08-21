@@ -7,8 +7,10 @@ import com.replyboard.domain.category.Category;
 import com.replyboard.domain.category.CategoryRepository;
 import com.replyboard.domain.member.Member;
 import com.replyboard.domain.member.MemberRepository;
+import com.replyboard.domain.post.PostRepository;
 import com.replyboard.exception.CategoryNotFoundException;
 import com.replyboard.exception.DuplicatedCategoryException;
+import com.replyboard.exception.InvalidRequestException;
 import com.replyboard.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public Long addCategory(final Long memberId, final CreateCategoryServiceRequest request) {
@@ -55,6 +58,11 @@ public class CategoryService {
     public void removeCategory(Long categoryId) {
         categoryRepository.findById(categoryId)
                 .orElseThrow(CategoryNotFoundException::new);
+
+        long count = postRepository.countByCategoryId(categoryId);
+        if (count > 0) {
+            throw new InvalidRequestException("게시글이 존재하는 카테고리는 제거할 수 없습니다.");
+        }
 
         categoryRepository.deleteById(categoryId);
     }

@@ -9,6 +9,9 @@ import com.replyboard.domain.category.CategoryRepository;
 import com.replyboard.domain.member.Member;
 import com.replyboard.domain.member.MemberRepository;
 import com.replyboard.domain.member.Role;
+import com.replyboard.domain.post.Post;
+import com.replyboard.domain.post.PostRepository;
+import com.replyboard.domain.post.PostStatus;
 import com.replyboard.exception.CategoryNotFoundException;
 import com.replyboard.exception.DuplicatedCategoryException;
 import com.replyboard.exception.InvalidRequestException;
@@ -34,6 +37,9 @@ class CategoryServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -182,6 +188,32 @@ class CategoryServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> categoryService.removeCategory(category.getId() + 1))
                 .isInstanceOf(CategoryNotFoundException.class)
                 .hasMessage("카테고리를 찾을 수 없습니다.");
+    }
+
+    @DisplayName("키테고리를 제거할 때 해당 카테고리의 게시글이 존재하면 예외가 발생한다. 즉, 제거할 수 없다.")
+    @Test
+    void removeCategoryExistsPost() {
+        // given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Category category = createCategory("기타", member);
+        categoryRepository.save(category);
+
+        Post post = Post.builder()
+                .title("글 등록하기")
+                .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
+                .build();
+        post.addMember(member);
+        post.addCategory(category);
+
+        postRepository.save(post);
+
+        // when
+        assertThatThrownBy(() -> categoryService.removeCategory(category.getId()))
+                .isInstanceOf(InvalidRequestException.class)
+                .hasMessage("게시글이 존재하는 카테고리는 제거할 수 없습니다.");
     }
 
     @DisplayName("카테고리를 수정한다.")

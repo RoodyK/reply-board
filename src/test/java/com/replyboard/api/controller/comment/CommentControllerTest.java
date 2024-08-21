@@ -29,15 +29,15 @@ class CommentControllerTest extends ControllerTestSupport {
     void getCommentList() throws Exception {
         // given
         CommentResponse reply1 = createComment(
-                2L, 1L, "파도", "1234", "저도 공감합니다.", null);
+                2L, 1L, "파도", "저도 공감합니다.", null);
 
         CommentResponse reply2 = createComment(
-                3L, 1L, "리플러", "1234", "공감합니다.", null);
+                3L, 1L, "리플러", "공감합니다.", null);
 
         List<CommentResponse> replies = List.of(reply1, reply2);
 
         CommentResponse commentResponse = createComment(
-                1L, null, "노을", "1234", "유용한 정보입니다.", replies);
+                1L, null, "노을", "유용한 정보입니다.", replies);
 
         BDDMockito.given(commentService.getCommentList(anyLong()))
                 .willReturn(List.of(commentResponse));
@@ -52,19 +52,16 @@ class CommentControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.data[0].id").value(1L))
                 .andExpect(jsonPath("$.data[0].parentId").isEmpty())
                 .andExpect(jsonPath("$.data[0].author").value("노을"))
-                .andExpect(jsonPath("$.data[0].password").value("1234"))
                 .andExpect(jsonPath("$.data[0].content").value("유용한 정보입니다."))
                 .andExpect(jsonPath("$.data[0].replies.length()").value(2))
                 .andExpect(jsonPath("$.data[0].replies[0].id").value(2L))
                 .andExpect(jsonPath("$.data[0].replies[0].parentId").value(1L))
                 .andExpect(jsonPath("$.data[0].replies[0].author").value("파도"))
-                .andExpect(jsonPath("$.data[0].replies[0].password").value("1234"))
                 .andExpect(jsonPath("$.data[0].replies[0].content").value("저도 공감합니다."))
                 .andExpect(jsonPath("$.data[0].replies[0].replies").isEmpty())
                 .andExpect(jsonPath("$.data[0].replies[1].id").value(3L))
                 .andExpect(jsonPath("$.data[0].replies[1].parentId").value(1L))
                 .andExpect(jsonPath("$.data[0].replies[1].author").value("리플러"))
-                .andExpect(jsonPath("$.data[0].replies[1].password").value("1234"))
                 .andExpect(jsonPath("$.data[0].replies[1].content").value("공감합니다."))
                 .andExpect(jsonPath("$.data[0].replies[1].replies").isEmpty())
                 ;
@@ -85,19 +82,6 @@ class CommentControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.message").value("OK"))
                 .andExpect(jsonPath("$.data").isEmpty())
         ;
-    }
-
-    private static CommentResponse createComment(
-            long id, Long parentId, String author, String password, String content, List<CommentResponse> replies
-    ) {
-        return CommentResponse.builder()
-                .id(id)
-                .parentId(parentId)
-                .author(author)
-                .password(password)
-                .content(content)
-                .replies(replies)
-                .build();
     }
 
     @DisplayName("댓글을 등록한다.")
@@ -628,5 +612,15 @@ class CommentControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.code").value(1000))
                 .andExpect(jsonPath("$.message").value("비밀번호가 일치하지 않습니다."))
         ;
+    }
+
+    private CommentResponse createComment(long id, Long parentId, String author, String content, List<CommentResponse> replies) {
+        return CommentResponse.builder()
+                .id(id)
+                .parentId(parentId)
+                .author(author)
+                .content(content)
+                .replies(replies)
+                .build();
     }
 }

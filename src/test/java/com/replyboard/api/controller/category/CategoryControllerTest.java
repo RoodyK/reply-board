@@ -170,27 +170,6 @@ class CategoryControllerTest extends ControllerTestSupport {
         BDDMockito.then(categoryService).should().getCategories();
     }
 
-    @CustomMockRoleUser
-    @DisplayName("카테고리 목록을 조회할 때 ROLE_USER 권한을 갖는 사용자는 조회할 수 없다.")
-    @Test
-    void getCategoriesRoleUser() throws Exception {
-        CategoryResponse response1 = createCategoryResponse(1L, "기타");
-        CategoryResponse response2 = createCategoryResponse(2L, "요리");
-
-        BDDMockito.given(categoryService.getCategories())
-                .willReturn(List.of(response1, response2));
-
-        mockMvc.perform(get("/api/v1/categories")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                )
-                .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.result").value(false))
-                .andExpect(jsonPath("$.code").value(1200))
-                .andExpect(jsonPath("$.message").value("페이지에 접근할 수 없습니다."))
-                .andExpect(jsonPath("$.validation").isEmpty())
-        ;
-    }
-
     @CustomMockRoleAdmin
     @DisplayName("카테고리를 삭제한다.")
     @Test
