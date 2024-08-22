@@ -161,6 +161,7 @@ public class initData {
             return CreatePostRequest.builder()
                     .title(title)
                     .content(content)
+                    .postStatus(PostStatus.PUBLIC)
                     .build();
         }
 

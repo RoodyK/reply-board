@@ -196,6 +196,7 @@ class PostControllerTest extends ControllerTestSupport {
                 .categoryId(1L)
                 .title("글 작성")
                 .content("내용입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         BDDMockito.given(postService.addPost(anyLong(), any(CreatePostServiceRequest.class)))
@@ -225,6 +226,7 @@ class PostControllerTest extends ControllerTestSupport {
                 .categoryId(1L)
                 .title(null)
                 .content("내용입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         // when
@@ -249,6 +251,7 @@ class PostControllerTest extends ControllerTestSupport {
                 .categoryId(1L)
                 .title("글 제목")
                 .content(null)
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         // when
@@ -273,6 +276,7 @@ class PostControllerTest extends ControllerTestSupport {
                 .categoryId(null)
                 .title("글 제목")
                 .content("글 내용")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         // when
@@ -289,6 +293,31 @@ class PostControllerTest extends ControllerTestSupport {
     }
 
     @CustomMockRoleUser
+    @DisplayName("게시글을 등록할 때 게시글 상태는 필수다.")
+    @Test
+    void addPostWithoutPostStatus() throws Exception {
+        // given
+        CreatePostRequest request = CreatePostRequest.builder()
+                .categoryId(1L)
+                .title("글 제목")
+                .content("글 내용")
+                .postStatus(null)
+                .build();
+
+        // when
+        mockMvc.perform(post("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result").value(false))
+                .andExpect(jsonPath("$.code").value(1000))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.postStatus").value("게시글 상태는 필수입니다."))
+        ;
+    }
+
+    @CustomMockRoleUser
     @DisplayName("게시글을 등록할 때 회원 ID로 회원이 존재하지 않으면 예외가 발생한다.")
     @Test
     void addPostNotExistsMemberId() throws Exception {
@@ -297,6 +326,7 @@ class PostControllerTest extends ControllerTestSupport {
                 .categoryId(1L)
                 .title("글 제목")
                 .content("글 내용")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         BDDMockito.given(postService.addPost(anyLong(), any(CreatePostServiceRequest.class)))
@@ -323,6 +353,7 @@ class PostControllerTest extends ControllerTestSupport {
                 .categoryId(1L)
                 .title("글 제목")
                 .content("글 내용")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         BDDMockito.given(postService.addPost(anyLong(), any(CreatePostServiceRequest.class)))

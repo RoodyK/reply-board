@@ -1,6 +1,7 @@
 package com.replyboard.api.controller.post.request;
 
 import com.replyboard.api.service.post.request.CreatePostServiceRequest;
+import com.replyboard.domain.post.PostStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -18,11 +19,15 @@ public class CreatePostRequest {
     @NotBlank(message = "내용을 입력해주세요.")
     private final String content;
 
+    @NotNull(message = "게시글 상태는 필수입니다.")
+    private PostStatus postStatus;
+
     @Builder
-    public CreatePostRequest(Long categoryId, String title, String content) {
+    public CreatePostRequest(Long categoryId, String title, String content, PostStatus postStatus) {
         this.categoryId = categoryId;
         this.title = title;
         this.content = content;
+        this.postStatus = postStatus;
     }
 
     public CreatePostServiceRequest toServiceRequest() {
@@ -30,6 +35,7 @@ public class CreatePostRequest {
                 .categoryId(categoryId)
                 .title(title)
                 .content(content)
+                .postStatus(postStatus)
                 .build();
     }
 }

@@ -57,7 +57,7 @@ public class Post extends BaseEntity {
         Post post = Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .postStatus(PostStatus.PUBLIC)
+                .postStatus(request.getPostStatus())
                 .views(0)
                 .build();
 
