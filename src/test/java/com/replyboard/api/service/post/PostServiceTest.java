@@ -279,6 +279,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId())
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         // when
@@ -308,6 +309,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId())
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         // when
@@ -330,6 +332,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId() + 1L)
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         // when
@@ -352,6 +355,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId() + 1L)
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
@@ -379,6 +383,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId() + 1L)
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
@@ -406,6 +411,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId())
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
@@ -445,6 +451,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId())
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
@@ -484,6 +491,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId())
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
@@ -521,6 +529,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId())
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
@@ -558,6 +567,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId())
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
@@ -589,6 +599,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId())
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
@@ -621,6 +632,7 @@ class PostServiceTest extends IntegrationTestSupport {
                 .categoryId(category.getId())
                 .title("글 등록하기")
                 .content("첫 게시글 입니다.")
+                .postStatus(PostStatus.PUBLIC)
                 .build();
 
         Post post = Post.createPost(request.toServiceRequest().toPostDto(), member, category);
@@ -739,6 +751,7 @@ class PostServiceTest extends IntegrationTestSupport {
         return CreatePostRequest.builder()
                 .title(title)
                 .content(content)
+                .postStatus(PostStatus.PUBLIC)
                 .build();
     }
 
