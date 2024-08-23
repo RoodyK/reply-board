@@ -63,7 +63,7 @@ public class PostService {
     /**
      * 회원이 자신의 게시글(비공개, 차단 포함) 조회
      */
-    public PostDetailResponse getMemberWritePost(Long postId, Long memberId) {
+    public PostDetailResponse getMemberAllPostList(Long postId, Long memberId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 

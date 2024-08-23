@@ -1,0 +1,153 @@
+= Reply Board API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+
+== 게시글 전체 조회
+
+=== CURL Request
+
+include::{snippets}/post-list/curl-request.adoc[]
+
+=== Request
+
+include::{snippets}/post-list/http-request.adoc[]
+
+=== Query Parameter
+
+include::{snippets}/post-list/query-parameters.adoc[]
+
+=== Response
+
+include::{snippets}/post-list/http-response.adoc[]
+
+=== Response Fields
+
+include::{snippets}/post-list//response-fields.adoc[]
+
+
+== 카테고리별 게시글 조회
+
+=== CURL Request
+
+include::{snippets}/post-list-by-category/curl-request.adoc[]
+
+=== Request
+
+include::{snippets}/post-list-by-category/http-request.adoc[]
+
+=== PathParameters
+
+include::{snippets}/post-list-by-category//path-parameters.adoc[]
+
+=== Query Parameter
+
+include::{snippets}/post-list-by-category/query-parameters.adoc[]
+
+=== Response
+
+include::{snippets}/post-list-by-category/http-response.adoc[]
+
+=== Response Fields
+
+include::{snippets}/post-list-by-category//response-fields.adoc[]
+
+
+== 게시글 단건 조회
+
+=== CURL Request
+
+include::{snippets}/post-inquiry/curl-request.adoc[]
+
+=== Request
+
+include::{snippets}/post-inquiry/http-request.adoc[]
+
+=== PathParameters
+
+include::{snippets}/post-inquiry//path-parameters.adoc[]
+
+=== Response
+
+include::{snippets}/post-inquiry/http-response.adoc[]
+
+=== Response Fields
+
+include::{snippets}/post-inquiry//response-fields.adoc[]
+
+
+== 게시글 등록
+
+=== CURL Request
+
+include::{snippets}/post-create/curl-request.adoc[]
+
+=== Request
+
+include::{snippets}/post-create/http-request.adoc[]
+
+=== Request Fields
+
+include::{snippets}/post-create//request-fields.adoc[]
+
+=== Response
+
+include::{snippets}/post-create/http-response.adoc[]
+
+=== Response Fields
+
+include::{snippets}/post-create//response-fields.adoc[]
+
+
+== 게시글 수정
+
+=== CURL Request
+
+include::{snippets}/post-edit/curl-request.adoc[]
+
+=== Request
+
+include::{snippets}/post-edit/http-request.adoc[]
+
+=== PathParameters
+
+include::{snippets}/post-edit//path-parameters.adoc[]
+
+=== Request Fields
+
+include::{snippets}/post-edit//request-fields.adoc[]
+
+=== Response
+
+include::{snippets}/post-edit/http-response.adoc[]
+
+=== Response Fields
+
+include::{snippets}/post-edit//response-fields.adoc[]
+
+
+== 게시글 삭제
+
+=== CURL Request
+
+include::{snippets}/post-delete/curl-request.adoc[]
+
+=== Request
+
+include::{snippets}/post-delete/http-request.adoc[]
+
+=== PathParameters
+
+include::{snippets}/post-delete//path-parameters.adoc[]
+
+=== Response
+
+include::{snippets}/post-delete/http-response.adoc[]
+
+=== Response Fields
+
+include::{snippets}/post-delete//response-fields.adoc[]

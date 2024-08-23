@@ -50,12 +50,12 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}/member")
-    public ResponseEntity<ApiDataResponse<PostDetailResponse>> getMemberWritePost(
+    public ResponseEntity<ApiDataResponse<PostDetailResponse>> getMemberAllPostList(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("postId") Long postId
     ) {
         MemberDto memberDto = userDetails.getMemberDto();
-        PostDetailResponse response = postService.getMemberWritePost(postId, memberDto.getId());
+        PostDetailResponse response = postService.getMemberAllPostList(postId, memberDto.getId());
 
         return ResponseEntity.ok().body(ApiDataResponse.of(response));
     }
