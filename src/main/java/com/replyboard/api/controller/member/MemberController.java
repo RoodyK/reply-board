@@ -6,7 +6,6 @@ import com.replyboard.api.security.auth.CustomUserDetails;
 import com.replyboard.api.service.member.MemberService;
 import com.replyboard.api.service.member.response.MemberResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
