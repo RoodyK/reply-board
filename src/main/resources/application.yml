@@ -38,7 +38,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true  # 출력되는 SQL 쿼리를 포맷팅하여 보기 좋게 표시
