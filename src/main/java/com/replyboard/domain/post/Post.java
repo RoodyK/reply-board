@@ -4,6 +4,7 @@ import com.replyboard.domain.BaseEntity;
 import com.replyboard.domain.category.Category;
 import com.replyboard.domain.comment.Comment;
 import com.replyboard.domain.member.Member;
+import com.replyboard.exception.NotOwnPostException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -95,5 +97,23 @@ public class Post extends BaseEntity {
 
     public long incrementViews() {
         return ++this.views;
+    }
+
+    public void validateMemberPost(Post post, Long loginMemberId) {
+        if (isNotEqualMemberId(post.getMemberId(), loginMemberId)) {
+            throw new NotOwnPostException();
+        }
+    }
+
+    private Long getMemberId() {
+        return this.member.getId();
+    }
+
+    private boolean isEqualMemberId(Long memberId, Long postWriterId) {
+        return Objects.equals(memberId, postWriterId);
+    }
+
+    private boolean isNotEqualMemberId(Long memberId, Long postWriterId) {
+        return !isEqualMemberId(memberId, postWriterId);
     }
 }

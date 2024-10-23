@@ -27,9 +27,20 @@ frontend
 
 ## 프로젝트 frontend
 
-reply-board-front 리포지토리의 vue 프로젝트를 빌드한 뒤 main/resources/static 하위에 옮겨서 html 구성  
+[reply-board-front](https://github.com/RoodyK/reply-board-front) 리포지토리의 vue 프로젝트를 빌드해주면 된다.
+<br/>
 
-- [reply-board-front](https://github.com/RoodyK/reply-board-front)
+게시판 프론트 프로젝트를 빌드해서 생기는 파일들을 아래의 구조대로 적용시키도 애플리케이션을 실행하면 된다. 
+
+```bash
+# 빌드 파일 경로
+src/main/resources/static
+├── assets
+│     ├── index-Cg4cKXRL.js
+│     └── index-D1g3Q5lT.css
+├── favicon.ico
+└── index.html
+```
 
 <br/>
 <br/>

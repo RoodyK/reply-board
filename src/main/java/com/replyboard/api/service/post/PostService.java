@@ -67,8 +67,6 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        validMemberId(memberId, post.getMember().getId());
-
         return PostDetailResponse.of(post);
     }
 
@@ -92,8 +90,6 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        validMemberId(memberId, post.getMember().getId());
-
         postRepository.delete(post);
     }
 
@@ -103,7 +99,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        validMemberId(memberId, post.getMember().getId());
+        post.validateMemberPost(post, memberId);
 
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(CategoryNotFoundException::new);
@@ -125,15 +121,5 @@ public class PostService {
                 .orElseThrow(PostNotFoundException::new);
 
         return post.incrementViews();
-    }
-
-    private void validMemberId(Long loginId, Long postWriterId) {
-        if (!isSameMemberId(loginId, postWriterId)) {
-            throw new NotOwnPostException();
-        }
-    }
-
-    private boolean isSameMemberId(Long memberId, Long postWriterId) {
-        return Objects.equals(memberId, postWriterId);
     }
 }
